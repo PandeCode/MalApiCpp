@@ -1,0 +1,2 @@
+bool testAuth();
+bool testAuthPath();
