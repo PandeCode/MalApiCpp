@@ -4,12 +4,17 @@ set(CXX_STANDARD 17)
 set(CXX_STANDARD_REQUIRED ON)
 set(CXX_EXTENSIONS ON)
 
+set(CMAKE_C_COMPILER /usr/bin/clang CACHE PATH "" FORCE)
+set(CMAKE_CXX_COMPILER /usr/bin/clang++ CACHE PATH "" FORCE)
+set(
+  CMAKE_CXX_FLAGS
+  "${CMAKE_CXX_FLAGS} -std=c++17 -ferror-limit=0 -ftemplate-backtrace-limit=0 -fuse-ld=lld -pedantic -Wno-unused-command-line-argument -Wextra"
+)
+
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-set(CMAKE_CXX_FLAGS "-std=c++17") # -v
 
 project(MalApi VERSION 0.1.0 DESCRIPTION "My Anime List Api Client" LANGUAGES CXX)
 
