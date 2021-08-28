@@ -158,6 +158,9 @@ bool Auth::expired() {
 
 	if(res.status_code == 200)
 		return false;
-	else
-		return true;
+	else if(res.status_code == 0) {
+		std::cout << "Library is not working. Or offline.\n";
+		std::abort();
+	}
+	return true;
 }

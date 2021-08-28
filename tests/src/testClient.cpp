@@ -91,14 +91,15 @@ void testGetForumBoards(const Client& client) {
 void testGetForumTopicDetail(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetForumTopicDetail" << std::endl;
-	auto forumTopicDetail = client.M__getForumTopicDetail(14);
+	auto forumTopicDetail = client.M__getForumTopicDetail(14, 4, 0);
 	std::cout << nlohmann::json::parse(forumTopicDetail).dump(4) << std::endl;
 }
 void testGetForumTopics(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetForumTopics" << std::endl;
 	auto forumTopics = client.M__getForumTopics(14, 1);
-	std::cout << nlohmann::json::parse(forumTopics).dump(4) << std::endl;
+	std::cout << forumTopics << std::endl;
+	//std::cout << nlohmann::json::parse(forumTopics).dump(4) << std::endl;
 }
 void testGetMangaList(const Client& client) {
 	std::cout << BANNER;
@@ -109,25 +110,26 @@ void testGetMangaList(const Client& client) {
 void testGetMangaDetails(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetMangaDetails" << std::endl;
-	auto mangaDetails = client.M__getMangaDetails(67615);
+	auto mangaDetails = client.M__getMangaDetails(5114);
 	std::cout << nlohmann::json::parse(mangaDetails).dump(4) << std::endl;
 }
 void testGetMangaRanking(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetMangaRanking" << std::endl;
-	auto mangaRanking = client.M__getMangaRanking();
+	auto mangaRanking = client.M__getMangaRanking(m_all, 4);
 	std::cout << nlohmann::json::parse(mangaRanking).dump(4) << std::endl;
 }
 void testUpdateUserMangaListStatus(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test UpdateUserMangaListStatus" << std::endl;
-	auto userMangaListStatus = client.M__updateUserMangaListStatus(67615);
+	auto userMangaListStatus = client.M__updateUserMangaListStatus(5114);
 	std::cout << nlohmann::json::parse(userMangaListStatus).dump(4) << std::endl;
 }
 void testGetUserMangaList(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetUserMangaList" << std::endl;
-	auto getUserMangaList = client.M__getUserMangaList();
+	auto getUserMangaList =
+	    client.M__getUserMangaList("@me", std::nullopt, std::nullopt, 4);
 	std::cout << nlohmann::json::parse(getUserMangaList).dump(4) << std::endl;
 }
 void testGetUserData(const Client& client) {

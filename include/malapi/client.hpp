@@ -24,8 +24,8 @@ class Client {
 	std::string M__getAnimeList(
 	    std::string                query,
 	    std::optional<std::string> fields = std::nullopt,
-	    uint8_t                    limit  = 100,
-	    uint8_t                    offset = 0) const;
+	    std::uint8_t               limit  = 100,
+	    std::uint8_t               offset = 0) const;
 
 	std::string M__getAnimeDetails(
 	    std::uint32_t              animeId,
@@ -33,23 +33,23 @@ class Client {
 
 	std::string M__getAnimeRanking(
 	    std::optional<std::string> fields      = std::nullopt,
-	    AnimeRankingParam          rankingType = all,
-	    uint8_t                    limit       = 100,
-	    uint8_t                    offset      = 0) const;
+	    AnimeRankingType           rankingType = all,
+	    std::uint8_t               limit       = 100,
+	    std::uint8_t               offset      = 0) const;
 
 	std::string M__getSeasonalAnime(
 	    std::uint32_t              year,
 	    SeasonParam                season,
 	    SeasonSortParam            sort   = anime_score,
 	    std::optional<std::string> fields = std::nullopt,
-	    uint8_t                    limit  = 100,
-	    uint8_t                    offset = 0) const;
+	    std::uint8_t               limit  = 100,
+	    std::uint8_t               offset = 0) const;
 
 	// User Anime
 
 	std::string M__getUserSuggestedAnime(
-	    uint8_t                    limit  = 100,
-	    uint8_t                    offset = 0,
+	    std::uint8_t               limit  = 100,
+	    std::uint8_t               offset = 0,
 	    std::optional<std::string> fields = std::nullopt) const;
 
 	std::string M__updateUserAnimeListStatus(
@@ -68,16 +68,16 @@ class Client {
 	    std::string                       userName = "@me",
 	    std::optional<AnimeStatusParam>   status   = std::nullopt,
 	    std::optional<UserAnimeSortParam> sort     = std::nullopt,
-	    uint8_t                           limit    = 100,
-	    uint8_t                           offset   = 0) const;
+	    std::uint8_t                      limit    = 100,
+	    std::uint8_t                      offset   = 0) const;
 
 	//# Forums
 
 	std::string M__getForumBoards() const;
 	std::string M__getForumTopicDetail(
 	    std::uint32_t topicId,
-	    uint8_t       limit  = 100,
-	    uint8_t       offset = 0) const;
+	    std::uint8_t  limit  = 100,
+	    std::uint8_t  offset = 0) const;
 
 	std::string M__getForumTopics(
 	    std::optional<std::uint32_t>  boardId       = std::nullopt,
@@ -86,22 +86,24 @@ class Client {
 	    std::optional<std::string>    query         = std::nullopt,
 	    std::optional<std::string>    topicUserName = std::nullopt,
 	    std::optional<std::string>    userName      = std::nullopt,
-	    uint8_t                       limit         = 100,
-	    uint8_t                       offset        = 0) const;
+	    std::uint8_t                  limit         = 100,
+	    std::uint8_t                  offset        = 0) const;
 
 	//# Manga
 	std::string M__getMangaList(
 	    std::string                query,
 	    std::optional<std::string> fields = std::nullopt,
-	    uint8_t                    limit  = 100,
-	    uint8_t                    offset = 0) const;
+	    std::uint8_t               limit  = 100,
+	    std::uint8_t               offset = 0) const;
 
-	std::string M__getMangaDetails(std::uint32_t mangaId) const;
+	std::string M__getMangaDetails(
+	    std::uint32_t              mangaId,
+	    std::optional<std::string> fields = std::nullopt) const;
 
 	std::string M__getMangaRanking(
-	    std::string                rankingType = "all", //MangaRankingTypeParam
-	    uint8_t                    limit       = 100,
-	    uint8_t                    offset      = 0,
+	    MangaRankingTypeParam      rankingType = m_all,
+	    std::uint8_t               limit       = 100,
+	    std::uint8_t               offset      = 0,
 	    std::optional<std::string> fields      = std::nullopt) const;
 
 	//# User Manga
@@ -110,12 +112,12 @@ class Client {
 	    std::uint32_t                   mangaId,
 	    std::optional<MangaStatusParam> status          = std::nullopt,
 	    std::optional<bool>             isReReading     = std::nullopt,
-	    std::optional<uint8_t>          score           = std::nullopt,
-	    std::optional<uint8_t>          numVolsRead     = std::nullopt,
-	    std::optional<uint8_t>          numChaptersRead = std::nullopt,
-	    std::optional<uint8_t>          priority        = std::nullopt,
-	    std::optional<uint8_t>          numTimesRead    = std::nullopt,
-	    std::optional<uint8_t>          reReadValue     = std::nullopt,
+	    std::optional<std::uint8_t>     score           = std::nullopt,
+	    std::optional<std::uint8_t>     numVolsRead     = std::nullopt,
+	    std::optional<std::uint8_t>     numChaptersRead = std::nullopt,
+	    std::optional<std::uint8_t>     priority        = std::nullopt,
+	    std::optional<std::uint8_t>     numTimesRead    = std::nullopt,
+	    std::optional<std::uint8_t>     reReadValue     = std::nullopt,
 	    std::optional<std::string>      tags            = std::nullopt,
 	    std::optional<std::string>      comments        = std::nullopt) const;
 
@@ -123,8 +125,8 @@ class Client {
 	    std::string                     userName = "@me",
 	    std::optional<MangaStatusParam> status   = std::nullopt,
 	    std::optional<MangaSortParam>   sort     = std::nullopt,
-	    uint8_t                         limit    = 100,
-	    uint8_t                         offset   = 0) const;
+	    std::uint8_t                    limit    = 100,
+	    std::uint8_t                    offset   = 0) const;
 
 	//# User
 	std::string M__getUserData(
