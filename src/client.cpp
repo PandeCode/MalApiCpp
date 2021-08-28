@@ -26,7 +26,9 @@ static const std::string& handleReturn(cpr::Response& res) {
 		case 0: return FAILED_REQUEST_TEXT; break;
 		case 200: return res.text; break;
 		default:
+			std::cout << "\033[91m";
 			printResponse(res);
+			std::cout << "\033[0m";
 			return res.text;
 			break;
 	}

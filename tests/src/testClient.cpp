@@ -67,7 +67,7 @@ void testGetSeasonalAnime(const Client& client) {
 void testGetUserSuggestedAnime(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetUserSuggestedAnime" << std::endl;
-	auto userSuggestedAnime = client.M__getUserSuggestedAnime();
+	auto userSuggestedAnime = client.M__getUserSuggestedAnime(4);
 	std::cout << nlohmann::json::parse(userSuggestedAnime).dump(4) << std::endl;
 }
 void testUpdateUserAnimeListStatus(const Client& client) {
@@ -97,9 +97,17 @@ void testGetForumTopicDetail(const Client& client) {
 void testGetForumTopics(const Client& client) {
 	std::cout << BANNER;
 	std::cout << "Test GetForumTopics" << std::endl;
-	auto forumTopics = client.M__getForumTopics(14, 1);
-	std::cout << forumTopics << std::endl;
-	//std::cout << nlohmann::json::parse(forumTopics).dump(4) << std::endl;
+	auto forumTopics = client.M__getForumTopics(
+	    std::nullopt,
+	    2,
+	    std::nullopt,
+	    "love",
+	    std::nullopt,
+	    std::nullopt,
+	    4,
+	    0);
+
+	std::cout << nlohmann::json::parse(forumTopics).dump(4) << std::endl;
 }
 void testGetMangaList(const Client& client) {
 	std::cout << BANNER;
