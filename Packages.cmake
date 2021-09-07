@@ -5,13 +5,6 @@ include(FetchContent)
 add_subdirectory(${CMAKE_SOURCE_DIR}/deps/Log)
 #### END LOG ###
 
-#### PISTACHE ####
-
-set(PISTACHE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/deps/pistache/include)
-set(PISTACHE_LIBRARIES pistache)
-
-#### END PISTACHE ###
-
 ### CPR ###
 set(CPR_BUILD_TESTS OFF)
 set(CPR_BUILD_TESTS_SSL OFF)
