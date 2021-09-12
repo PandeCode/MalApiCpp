@@ -12,7 +12,9 @@ static const std::string BASE_URL = "https://api.myanimelist.net/v2/";
 /*"status{start_date,finish_"*/
 /*"date,priority,comments}"*/
 class Client {
-	Auth               m_auth;
+	Auth                         m_auth;
+	static const httplib::Client httpClient;
+
 	inline cpr::Header authHeader() const {
 		return cpr::Header({
 		    {"Authorization", "Bearer " + m_auth.authData.access_token},

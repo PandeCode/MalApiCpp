@@ -1,8 +1,7 @@
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "malapi/client.hpp"
 
-#include "cpr/api.h"
-#include "cpr/curl_container.h"
-#include "cpr/parameters.h"
+#include "httplib.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -13,6 +12,8 @@ static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
 static constexpr std::uint8_t OFFSET_DEFAULT = 0;
 static const std::string      FAILED_REQUEST_TEXT =
     "{\"message\" : \"failed_request\", \"message\": \"\"}";
+
+httplib::Client httpClient = httplib::Client("https://api.myanimelist.net");
 
 static void printResponse(cpr::Response& res) {
 	std::cout << "status_code : " << res.status_code << std::endl;
@@ -36,6 +37,11 @@ static const std::string& handleReturn(cpr::Response& res) {
 
 Client::Client(Auth& auth) : m_auth(auth) {
 	if(!auth.isAuthenticated) m_auth.authenticate();
+
+	httpClient.set_default_headers({
+	    {"Authorization", "Bearer " + m_auth.authData.access_token},
+	    {"Accept", "application/json"},
+	});
 }
 
 Client::Client(
@@ -45,6 +51,11 @@ Client::Client(
     std::string state) :
     m_auth(clientId, clientSecrect, redirectUri, state) {
 	m_auth.authenticate();
+
+	this->httpClient.set_default_headers({
+	    {"Authorization", "Bearer " + m_auth.authData.access_token},
+	    {"Accept", "application/json"},
+	});
 }
 
 std::string Client::M__getAnimeList(
@@ -52,12 +63,23 @@ std::string Client::M__getAnimeList(
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	auto params = cpr::Parameters({{"q", query}});
-	if(limit != LIMIT_DEFAULT) params.Add({"limit", std::to_string(limit)});
-	if(offset != OFFSET_DEFAULT) params.Add({"offset", std::to_string(offset)});
-	if(fields.has_value()) params.Add({"fields", fields.value()});
-	auto res = cpr::Get(cpr::Url(BASE_URL + "anime"), params, authHeader());
-	return handleReturn(res);
+
+	httplib::Params params {{"q", query}};
+	if(fields.has_value()) params.emplace("fields", fields.value());
+	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
+	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
+
+	if(auto res = httpClient.Get("/v2/anime", params)) {
+		if(res->status == 200) {
+			std::cout << res->body << std::endl;
+			return res->body;
+		}
+		return FAILED_REQUEST_TEXT;
+	} else {
+		auto err = res.error();
+		std::cout << "Error: " << err << std::endl;
+		return FAILED_REQUEST_TEXT;
+	}
 };
 
 std::string Client::M__getAnimeDetails(

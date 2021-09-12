@@ -1,5 +1,6 @@
 #include "testClient.hpp"
 
+#include "httplib.hpp"
 #include "malapi/client.hpp"
 
 #include <cstdint>
@@ -11,11 +12,15 @@ static const std::string MAL_CLIENT_SECRET =
 static const std::string MAL_REDIRECT_URI = "http://127.0.0.1:8000/callback";
 
 bool testClient() {
+	httplib::Client cli("https://cpp-httplib-server.yhirose.repl.co");
+	auto res = cli.Get("/hi");
+	std::cout << res->status << std::endl;
+	std::cout << res->body << std::endl;
 
+//#if 0
 	Client client(MAL_CLIENT_ID, MAL_CLIENT_SECRET, MAL_REDIRECT_URI);
 
 	std::cout << "Test Client\n";
-
 	testGetUserData(client);
 	testGetAnimeList(client);
 	testGetAnimeDetails(client);
@@ -34,6 +39,7 @@ bool testClient() {
 	//testUpdateUserMangaListStatus(client);
 	//client.deleteUserMangaListItem
 	testGetUserMangaList(client);
+//#endif
 
 	return true;
 }

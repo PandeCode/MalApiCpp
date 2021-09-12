@@ -1,6 +1,7 @@
 #pragma once
 #include "../nlohmann/json.hpp"
 #include "cpr/response.h"
+#include "httplib.hpp"
 
 #include <string>
 
@@ -52,6 +53,9 @@ class Auth {
 
 	static std::string listenForCode();
 	static std::string getNewCodeVerifier();
+
+	//httplib::Client httpClient =
+		//httplib::Client("https://api.myanimelist.net/v2/users/@me");
 
 	void authenticate();
 	bool expired();

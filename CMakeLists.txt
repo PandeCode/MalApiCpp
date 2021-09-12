@@ -20,7 +20,7 @@ project(MalApi VERSION 0.1.0 DESCRIPTION "My Anime List Api Client" LANGUAGES CX
 
 find_package(Threads REQUIRED)
 
-include(${CMAKE_SOURCE_DIR}/Packages.cmake)
+add_subdirectory(${CMAKE_SOURCE_DIR}/deps/Log)
 link_directories(${CMAKE_SOURCE_DIR}/libs)
 
 file(
@@ -59,5 +59,41 @@ add_library(${MALAPI_LIBRARY} ${MALAPI_SRC_FILES})
 target_compile_options(${MALAPI_LIBRARY} PUBLIC -pthread)
 target_link_libraries(${MALAPI_LIBRARY} PRIVATE ${_LIBRARIES})
 target_include_directories(${MALAPI_LIBRARY} PRIVATE ${MALAPI_INCLUDE_DIRS})
+
+#target_precompile_headers(
+  #${MALAPI_LIBRARY}
+  #PUBLIC
+  #<iostream>
+  #<string>
+  #${CMAKE_SOURCE_DIR}/include/httplib.hpp
+  ##${CMAKE_SOURCE_DIR}/include/crow.h
+  ##${CMAKE_SOURCE_DIR}/crow/app.h
+  ##${CMAKE_SOURCE_DIR}/crow/ci_map.h
+  ##${CMAKE_SOURCE_DIR}/crow/common.h
+  ##${CMAKE_SOURCE_DIR}/crow/compression.h
+  ##${CMAKE_SOURCE_DIR}/crow/dumb_timer_queue.h
+  ##${CMAKE_SOURCE_DIR}/crow/http_connection.h
+  ##${CMAKE_SOURCE_DIR}/crow/http_parser_merged.h
+  ##${CMAKE_SOURCE_DIR}/crow/http_request.h
+  ##${CMAKE_SOURCE_DIR}/crow/http_response.h
+  ##${CMAKE_SOURCE_DIR}/crow/http_server.h
+  ##${CMAKE_SOURCE_DIR}/crow/json.h
+  ##${CMAKE_SOURCE_DIR}/crow/logging.h
+  ##${CMAKE_SOURCE_DIR}/crow/middleware_context.h
+  ##${CMAKE_SOURCE_DIR}/crow/middlewares
+  ##${CMAKE_SOURCE_DIR}/crow/mime_types.h
+  ##${CMAKE_SOURCE_DIR}/crow/multipart.h
+  ##${CMAKE_SOURCE_DIR}/crow/mustache.h
+  ##${CMAKE_SOURCE_DIR}/crow/parser.h
+  ##${CMAKE_SOURCE_DIR}/crow/query_string.h
+  ##${CMAKE_SOURCE_DIR}/crow/returnable.h
+  ##${CMAKE_SOURCE_DIR}/crow/routing.h
+  ##${CMAKE_SOURCE_DIR}/crow/settings.h
+  ##${CMAKE_SOURCE_DIR}/crow/socket_adaptors.h
+  ##${CMAKE_SOURCE_DIR}/crow/TinySHA1.hpp
+  ##${CMAKE_SOURCE_DIR}/crow/utility.h
+  ##${CMAKE_SOURCE_DIR}/crow/version.h
+  ##${CMAKE_SOURCE_DIR}/crow/websocket.h
+#)
 
 add_subdirectory(tests)

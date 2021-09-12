@@ -83,9 +83,8 @@ std::string Auth::getNewCodeVerifier() {
 	    '4', '5', '6', '7', '8', '9', '-', '.', '_', '~',
 	};
 
-	for(uint8_t i = 0; i < 128; i++) {
+	for(std::uint8_t i = 0; i < 128; i++)
 		token[i] = charPool[rand() % 66];
-	}
 
 	return std::string(token, 128);
 }
@@ -148,17 +147,18 @@ bool Auth::expired() {
 	if(!isAuthenticated) return true;
 	if(authData.access_token == "") return true;
 
-	auto authorization = "Bearer " + authData.access_token;
-	auto res           = cpr::Get(
-            cpr::Url("https://api.myanimelist.net/v2/users/@me"),
-            cpr::Header({
-                {"Authorization", authorization},
-                {"Accept", "application/json"},
-            }));
+	httplib::Client cli("https://api.myanimelist.net");
 
-	if(res.status_code == 200)
+	auto res          = cli.Get(
+            "/v2/users/@me",
+            httplib::Headers {
+                {"Authorization", "Bearer " + authData.access_token},
+                {"Accept", "application/json"},
+            });
+
+	if(res->status == 200)
 		return false;
-	else if(res.status_code == 0) {
+	else if(res->status == 0) {
 		std::cout << "Library is not working. Or offline.\n";
 		std::abort();
 	}
