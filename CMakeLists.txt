@@ -20,7 +20,6 @@ project(MalApi VERSION 0.1.0 DESCRIPTION "My Anime List Api Client" LANGUAGES CX
 
 find_package(Threads REQUIRED)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/deps/Log)
 link_directories(${CMAKE_SOURCE_DIR}/libs)
 
 file(
