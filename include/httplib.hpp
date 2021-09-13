@@ -838,7 +838,6 @@ public:
   virtual bool is_valid() const;
 
   Result Get(const char *path);
-  Result Get(const char *path, const Params& params);
   Result Get(const char *path, const Headers &headers);
   Result Get(const char *path, Progress progress);
   Result Get(const char *path, const Headers &headers, Progress progress);
@@ -1169,7 +1168,6 @@ public:
   bool is_valid() const;
 
   Result Get(const char *path);
-  Result Get(const char *path, const Params& params);
   Result Get(const char *path, const Headers &headers);
   Result Get(const char *path, Progress progress);
   Result Get(const char *path, const Headers &headers, Progress progress);
@@ -2975,7 +2973,14 @@ inline bool gzip_decompressor::decompress(const char *data, size_t data_length,
       strm_.avail_out = static_cast<uInt>(buff.size());
       strm_.next_out = reinterpret_cast<Bytef *>(buff.data());
 
+      auto prev_avail_in = strm_.avail_in;
+
       ret = inflate(&strm_, Z_NO_FLUSH);
+
+      if (prev_avail_in - strm_.avail_in == 0) {
+        return false;
+      }
+
       assert(ret != Z_STREAM_ERROR);
       switch (ret) {
       case Z_NEED_DICT:
@@ -6237,10 +6242,6 @@ inline Result ClientImpl::Get(const char *path) {
   return Get(path, Headers(), Progress());
 }
 
-inline Result ClientImpl::Get(const char *path, const Params& params) {
-  return Get(path, params, Headers());
-}
-
 inline Result ClientImpl::Get(const char *path, Progress progress) {
   return Get(path, Headers(), std::move(progress));
 }
@@ -7612,9 +7613,6 @@ inline Result Client::Get(const char *path, const Params &params,
                           const Headers &headers,
                           ContentReceiver content_receiver, Progress progress) {
   return cli_->Get(path, params, headers, content_receiver, progress);
-}
-inline Result Client::Get(const char *path, const Params &params) {
-  return cli_->Get(path, params);
 }
 inline Result Client::Get(const char *path, const Params &params,
                           const Headers &headers,

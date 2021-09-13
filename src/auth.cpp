@@ -1,10 +1,6 @@
 #include "malapi/auth.hpp"
 
-#include "cpr/cpr.h"
-#include "cpr/cprtypes.h"
-#include "cpr/parameters.h"
-#include "cpr/payload.h"
-#include "cpr/response.h"
+#include "httplib.hpp"
 #include "malapi/listener.hpp"
 #include "nlohmann/json.hpp"
 
@@ -12,6 +8,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <vector>
 
 #define NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_NON_INLINE(Type, ...)                         \
@@ -92,23 +89,28 @@ std::string Auth::listenForCode() {
 	return Listener::listen();
 }
 
-cpr::Response Auth::getUserToken(std::string code) const {
-	cpr::Response response = cpr::Post(
-	    cpr::Url("myanimelist.net/v1/oauth2/token"),
-	    cpr::Header({
-		{"Accept", "application/json"},
-		{"Content-Type", "application/x-www-form-urlencoded"},
-	    }),
-	    cpr::Payload({
-		{"client_id", m_clientId},
-		{"client_secret", m_clientSecrect},
-		{"code_verifier", m_codeChallenge},
-		{"redirect_uri", m_redirectUri},
-		{"code", code},
-		{"grant_type", "authorization_code"},
-	    }));
+httplib::Result Auth::getUserToken(std::string code) const {
+	httplib::Client cli("https://myanimelist.net");
 
-	return response;
+	auto data = std::stringstream();
+	data << "grant_type=authorization_code&client_id=" << m_clientId
+	     << "&client_secret=" << m_clientSecrect
+	     << "&code_verifier=" << m_codeChallenge << "&redirect_uri=" << m_redirectUri
+	     << "&code=" << code;
+
+	auto res =
+	    cli.Post("/v1/oauth2/token", data.str(), "application/x-www-form-urlencoded");
+
+	//httplib::Conten({
+	//{"client_id", m_clientId},
+	//{"client_secret", m_clientSecrect},
+	//{"code_verifier", m_codeChallenge},
+	//{"redirect_uri", m_redirectUri},
+	//{"code", code},
+	//{"grant_type", "authorization_code"},
+	//})
+
+	return res;
 }
 
 void Auth::authenticate() {
@@ -127,11 +129,11 @@ reAuth:
 		auto code        = listenForCode();
 		auto authDataRaw = getUserToken(code);
 
-		if(authDataRaw.status_code != 200) {
+		if(authDataRaw->status != 200) {
 			std::cout << "Response failed" << std::endl;
 			return;
 		}
-		authText = authDataRaw.text;
+		authText = authDataRaw->body;
 		overwriteFile(m_cacheFilePath, authText);
 	}
 	auto authJson = json::parse(authText);
@@ -149,12 +151,12 @@ bool Auth::expired() {
 
 	httplib::Client cli("https://api.myanimelist.net");
 
-	auto res          = cli.Get(
-            "/v2/users/@me",
-            httplib::Headers {
-                {"Authorization", "Bearer " + authData.access_token},
-                {"Accept", "application/json"},
-            });
+	auto res = cli.Get(
+	    "/v2/users/@me",
+	    httplib::Headers {
+		{"Authorization", "Bearer " + authData.access_token},
+		{"Accept", "application/json"},
+	    });
 
 	if(res->status == 200)
 		return false;

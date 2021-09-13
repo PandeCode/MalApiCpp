@@ -2,6 +2,7 @@
 #include "./auth.hpp"
 #include "./clientTypes.hpp"
 #include "malapi/client.hpp"
+#include "httplib.hpp"
 
 #include <optional>
 #include <string>
@@ -12,15 +13,8 @@ static const std::string BASE_URL = "https://api.myanimelist.net/v2/";
 /*"status{start_date,finish_"*/
 /*"date,priority,comments}"*/
 class Client {
-	Auth                         m_auth;
-	static const httplib::Client httpClient;
-
-	inline cpr::Header authHeader() const {
-		return cpr::Header({
-		    {"Authorization", "Bearer " + m_auth.authData.access_token},
-		    {"Accept", "application/json"},
-		});
-	};
+	Auth            m_auth;
+	httplib::Client httpClient = httplib::Client("https://api.myanimelist.net");
 
 	// Anime
 	std::string M__getAnimeList(

@@ -1,9 +1,6 @@
 #include "testAuth.hpp"
 
 #include "Log.hpp"
-#include "cpr/api.h"
-#include "cpr/cprtypes.h"
-#include "cpr/response.h"
 #include "nlohmann/json.hpp"
 
 #include <cstdlib>
@@ -12,11 +9,11 @@
 #include <string>
 
 using namespace nlohmann;
-void printResponse(cpr::Response& response) {
-	std::cout << "Status Code : " << response.status_code << std::endl;
-	std::cout << "Raw Header  : " << response.raw_header << std::endl;
-	std::cout << "Text        : " << response.text << std::endl;
-	std::cout << "Reason      : " << response.reason << std::endl;
+void printResponse(httplib::Result& response) {
+	std::cout << "Status Code : " << response->status << std::endl;
+	//std::cout << "Raw Header  : " << response.raw_header << std::endl;
+	std::cout << "Text        : " << response->body << std::endl;
+	std::cout << "Reason      : " << response->reason << std::endl;
 }
 
 bool testAuth() {
@@ -38,19 +35,20 @@ bool testAuth() {
 
 	auto authorization = "Bearer " + auth.authData.access_token;
 
-	auto res     = cpr::Get(cpr::Url("https://api.myanimelist.net/v2/users/@me"),
-                            cpr::Header({
-                                {"Authorization", authorization},
-                                {"Accept", "application/json"},
-                            }));
+	httplib::Client httpClient("https://api.myanimelist.net");
 
-	auto resJson = json::parse(res.text);
+	auto res = httpClient.Get(
+	    "https://api.myanimelist.net/v2/users/@me",
+	    httplib::Headers({
+		{"Authorization", authorization},
+		{"Accept", "application/json"},
+	    }));
+
+	auto resJson = json::parse(res->body);
 
 	std::cout << "Result: \n" << resJson.dump(4) << std::endl;
-
 	return true;
 }
-
 bool testAuthPath() {
 	const std::string MAL_CLIENT_ID = "430ce643e7b01ec2e8ae3d290e6cb56b";
 	const std::string MAL_CLIENT_SECRET =
@@ -71,7 +69,7 @@ bool testAuthPath() {
 	auto authData = auth.getUserToken(authCode);
 	printResponse(authData);
 
-	auto                authJson      = json::parse(authData.text);
+	auto                authJson      = json::parse(authData->body);
 	AuthTypes::AuthData j             = authJson.get<AuthTypes::AuthData>();
 	auto                authorization = "Bearer " + j.access_token;
 	return true;
