@@ -186,7 +186,7 @@ std::string Client::M__updateUserAnimeListStatus(
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
-				// clang-format off
+			// clang-format off
 				case AnimeStatusParam::watching      :  params.emplace("status", "watching"      ); break;
 				case AnimeStatusParam::completed     :  params.emplace("status", "completed"     ); break;
 				case AnimeStatusParam::on_hold       :  params.emplace("status", "on_hold"       ); break;
@@ -481,6 +481,194 @@ std::string Client::M__getUserData(
 		.c_str()));
 }
 
+template <class ReturnType>
+ReturnType Client::getAnimeList(
+    std::string                query,
+    std::optional<std::string> fields,
+    std::uint8_t               limit,
+    std::uint8_t               offset) const {
+	return M__getAnimeList(query, fields, limit, offset);
+}
+
+template <class ReturnType>
+ReturnType Client::getAnimeDetails(
+    std::uint32_t              animeId,
+    std::optional<std::string> fields) const {
+	return M__getAnimeDetails(animeId, fields);
+}
+
+template <class ReturnType>
+ReturnType Client::getAnimeRanking(
+    std::optional<std::string> fields,
+    AnimeRankingType           rankingType,
+    std::uint8_t               limit,
+    std::uint8_t               offset) const {
+	return M__getAnimeRanking(fields, rankingType, limit, offset);
+}
+
+template <class ReturnType>
+ReturnType Client::getSeasonalAnime(
+    std::uint32_t              year,
+    SeasonParam                season,
+    SeasonSortParam            sort,
+    std::optional<std::string> fields,
+    std::uint8_t               limit,
+    std::uint8_t               offset) const {
+	return M__getSeasonalAnime(year, season, sort, fields, limit, offset);
+}
+
+// User Anime
+
+template <class ReturnType>
+ReturnType Client::getUserSuggestedAnime(
+    std::uint8_t               limit,
+    std::uint8_t               offset,
+    std::optional<std::string> fields) const {
+	return M__getUserSuggestedAnime(limit, offset, fields);
+}
+
+template <class ReturnType>
+ReturnType Client::updateUserAnimeListStatus(
+    std::uint32_t                   animeId,
+    std::optional<AnimeStatusParam> status,
+    std::optional<int>              score,
+    std::optional<int>              priority,
+    std::optional<int>              numWatchedEpisodes,
+    std::optional<bool>             isRewatching,
+    std::optional<int>              numTimesRewatched,
+    std::optional<int>              rewatchValue,
+    std::optional<std::string>      tags,
+    std::optional<std::string>      comments) const {
+	return M__updateUserAnimeListStatus(
+	    animeId,
+	    status,
+	    score,
+	    priority,
+	    numWatchedEpisodes,
+	    isRewatching,
+	    numTimesRewatched,
+	    rewatchValue,
+	    tags,
+	    comments);
+}
+
+template <class ReturnType>
+ReturnType Client::getUserAnimeList(
+    std::string                       userName,
+    std::optional<AnimeStatusParam>   status,
+    std::optional<UserAnimeSortParam> sort,
+    std::uint8_t                      limit,
+    std::uint8_t                      offset) const {
+	return M__getUserAnimeList(userName, status, sort, limit, offset);
+}
+
+//# Forums
+
+template <class ReturnType>
+ReturnType Client::getForumBoards() const {
+	return M__getForumBoards();
+}
+template <class ReturnType>
+ReturnType Client::getForumTopicDetail(
+    std::uint32_t topicId,
+    std::uint8_t  limit,
+    std::uint8_t  offset) const {
+	return M__getForumTopicDetail(topicId, limit, offset);
+}
+
+template <class ReturnType>
+ReturnType Client::getForumTopics(
+    std::optional<std::uint32_t>  boardId,
+    std::optional<std::uint32_t>  subboardId,
+    std::optional<ForumSortParam> sort,
+    std::optional<std::string>    query,
+    std::optional<std::string>    topicUserName,
+    std::optional<std::string>    userName,
+    std::uint8_t                  limit,
+    std::uint8_t                  offset) const {
+	return M__getForumTopics(
+	    boardId,
+	    subboardId,
+	    sort,
+	    query,
+	    topicUserName,
+	    userName,
+	    limit,
+	    offset);
+}
+
+//# Manga
+template <class ReturnType>
+ReturnType Client::getMangaList(
+    std::string                query,
+    std::optional<std::string> fields,
+    std::uint8_t               limit,
+    std::uint8_t               offset) const {
+	return M__getMangaList(query, fields, limit, offset);
+}
+
+template <class ReturnType>
+ReturnType Client::getMangaDetails(
+    std::uint32_t              mangaId,
+    std::optional<std::string> fields) const {
+	return M__getMangaDetails(mangaId, fields);
+}
+
+template <class ReturnType>
+ReturnType Client::getMangaRanking(
+    MangaRankingTypeParam      rankingType,
+    std::uint8_t               limit,
+    std::uint8_t               offset,
+    std::optional<std::string> fields) const {
+	return M__getMangaRanking(rankingType, limit, offset, fields);
+}
+
+//# User Manga
+
+template <class ReturnType>
+ReturnType Client::updateUserMangaListStatus(
+    std::uint32_t                   mangaId,
+    std::optional<MangaStatusParam> status,
+    std::optional<bool>             isReReading,
+    std::optional<std::uint8_t>     score,
+    std::optional<std::uint8_t>     numVolsRead,
+    std::optional<std::uint8_t>     numChaptersRead,
+    std::optional<std::uint8_t>     priority,
+    std::optional<std::uint8_t>     numTimesRead,
+    std::optional<std::uint8_t>     reReadValue,
+    std::optional<std::string>      tags,
+    std::optional<std::string>      comments) const {
+	return M__updateUserMangaListStatus(
+	    mangaId,
+	    status,
+	    isReReading,
+	    score,
+	    numVolsRead,
+	    numChaptersRead,
+	    priority,
+	    numTimesRead,
+	    reReadValue,
+	    tags,
+	    comments);
+}
+
+template <class ReturnType>
+ReturnType Client::getUserMangaList(
+    std::string                     userName,
+    std::optional<MangaStatusParam> status,
+    std::optional<MangaSortParam>   sort,
+    std::uint8_t                    limit,
+    std::uint8_t                    offset) const {
+	return M__getUserMangaList(userName, status, sort, limit, offset);
+}
+
+//# User
+template <class ReturnType>
+ReturnType
+    Client::getUserData(std::string userName, std::optional<std::string> fields) const {
+	return M__getUserData(userName, fields);
+}
+
 bool Client::deleteUserAnime(std::uint32_t animeId) const {
 	if(auto res = httpClient.Delete(
 	       (("/v2/anime/" + std::to_string(animeId) + "/my_list_status").c_str()))) {
@@ -495,4 +683,34 @@ bool Client::deleteUserMangaListItem(std::uint32_t mangaId) const {
 		return res->status == 200;
 	} else
 		return false;
+}
+
+void Client::___defs() {
+	// Anime
+	getAnimeList<std::string>("");
+	getAnimeDetails<std::string>(0);
+	getAnimeRanking<std::string>();
+	getSeasonalAnime<std::string>(0, SeasonParam ::fall);
+
+	// User Anime
+	getUserSuggestedAnime<std::string>();
+	updateUserAnimeListStatus<std::string>(0);
+	getUserAnimeList<std::string>("");
+
+	// Forums
+	getForumBoards<std::string>();
+	getForumTopicDetail<std::string>(0);
+	getForumTopics<std::string>();
+
+	// Manga
+	getMangaList<std::string>("");
+	getMangaDetails<std::string>(0);
+	getMangaRanking<std::string>(MangaRankingTypeParam::all);
+
+	// User Manga
+	updateUserMangaListStatus<std::string>(0);
+	getUserMangaList<std::string>("");
+
+	// User
+	getUserData<std::string>("");
 }
