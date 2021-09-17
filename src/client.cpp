@@ -35,7 +35,8 @@ static const std::string& handleReturn(const httplib::Result& res) {
 	}
 }
 
-Client::Client(Auth& auth) : m_auth(auth) {
+Client::Client(Auth& auth) :
+    m_auth(auth), httpClient(httplib::Client("https://api.myanimelist.net")) {
 	if(!auth.isAuthenticated) m_auth.authenticate();
 
 	httpClient.set_default_headers({
@@ -49,7 +50,8 @@ Client::Client(
     std::string clientSecrect,
     std::string redirectUri,
     std::string state) :
-    m_auth(clientId, clientSecrect, redirectUri, state) {
+    m_auth(clientId, clientSecrect, redirectUri, state),
+    httpClient(httplib::Client("https://api.myanimelist.net")) {
 	m_auth.authenticate();
 
 	httpClient.set_default_headers({
@@ -63,12 +65,6 @@ std::string Client::M__getAnimeList(
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	httplib::Params params {{"q", query}};
 	if(fields.has_value()) params.emplace("fields", fields.value());
@@ -84,12 +80,6 @@ std::string Client::M__getAnimeDetails(
     std::optional<std::string> fields) const {
 	httplib::Params params;
 	if(fields.has_value()) params.emplace("fields", fields.value());
-
-	httplib::Client httpClient = httplib::Client("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
@@ -118,12 +108,6 @@ std::string Client::M__getAnimeRanking(
 		case  AnimeRankingType::favorite     :  params.emplace("ranking_type", "favorite"     ); break;
 			// clang-format on
 	}
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	if(fields.has_value()) params.emplace("fields", fields.value());
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
@@ -164,12 +148,6 @@ std::string Client::M__getSeasonalAnime(
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(httpClient.Get(
 	    httplib::append_query_params(
 		("/v2/anime/season/" + std::to_string(year) + seasonString).c_str(),
@@ -189,12 +167,6 @@ std::string Client::M__getUserSuggestedAnime(
 	if(fields.has_value()) params.emplace("fields", fields.value());
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	return handleReturn(httpClient.Get(
 	    httplib::append_query_params("/v2/anime/suggestions", params).c_str()));
@@ -241,12 +213,6 @@ std::string Client::M__updateUserAnimeListStatus(
 	if(tags.has_value()) params.emplace("tags", tags.value());
 	if(comments.has_value()) params.emplace("comments", comments.value());
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(httpClient.Patch(
 	    httplib::append_query_params(
 		("/v2/anime/" + std::to_string(animeId) + "/my_list_status").c_str(),
@@ -286,12 +252,6 @@ std::string Client::M__getUserAnimeList(
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
 			       ("/v2/users/" + userName + "/animelist").c_str(),
@@ -302,12 +262,6 @@ std::string Client::M__getUserAnimeList(
 //# Forums
 
 std::string Client::M__getForumBoards() const {
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	return handleReturn(httpClient.Get("/v2/forum/boards"));
 }
@@ -320,12 +274,6 @@ std::string Client::M__getForumTopicDetail(
 	httplib::Params params;
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
@@ -364,12 +312,6 @@ std::string Client::M__getForumTopics(
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(httpClient.Get(
 	    httplib::append_query_params("/v2/forum/topics", params).c_str()));
 }
@@ -385,12 +327,6 @@ std::string Client::M__getMangaList(
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 	if(fields.has_value()) params.emplace("fields", fields.value());
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params("/v2/manga", params).c_str()));
 }
@@ -400,12 +336,6 @@ std::string Client::M__getMangaDetails(
     std::optional<std::string> fields) const {
 	httplib::Params params;
 	if(fields.has_value()) params.emplace("fields", fields.value());
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
@@ -440,12 +370,6 @@ std::string Client::M__getMangaRanking(
 	if(fields.has_value()) params.emplace("fields", fields.value());
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
-
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
 	std::string str = httplib::append_query_params("/v2/anime/ranking", params);
 	//str = "/v2/anime/ranking?limit=4&ranking_type=manga";
@@ -500,12 +424,6 @@ std::string Client::M__updateUserMangaListStatus(
 	if(tags.has_value()) params.emplace("tags", tags.value());
 	if(comments.has_value()) params.emplace("comments", comments.value());
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(httpClient.Patch(
 	    httplib::append_query_params(
 		("/v2/manga/" + std::to_string(mangaId) + "/my_list_status").c_str(),
@@ -545,12 +463,6 @@ std::string Client::M__getUserMangaList(
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
 			       ("/v2/users/" + userName + "/animelist").c_str(),
@@ -564,37 +476,20 @@ std::string Client::M__getUserData(
 	auto params = httplib::Params {};
 	if(fields.has_value()) params.emplace("fields", fields.value());
 
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	return handleReturn(httpClient.Get(
 	    httplib::append_query_params(("/v2/users/" + userName).c_str(), params)
 		.c_str()));
 }
 
 bool Client::deleteUserAnime(std::uint32_t animeId) const {
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
-
 	if(auto res = httpClient.Delete(
 	       (("/v2/anime/" + std::to_string(animeId) + "/my_list_status").c_str()))) {
 		return res->status == 200;
 	} else
 		return false;
 }
-bool Client::deleteUserMangaListItem(std::uint32_t mangaId) const {
-	httplib::Client httpClient("https://api.myanimelist.net");
-	httpClient.set_default_headers({
-	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
-	});
 
+bool Client::deleteUserMangaListItem(std::uint32_t mangaId) const {
 	if(auto res = httpClient.Delete(
 	       ("/v2/manga/" + std::to_string(mangaId) + "/my_list_status").c_str())) {
 		return res->status == 200;

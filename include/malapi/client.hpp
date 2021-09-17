@@ -9,12 +9,9 @@
 
 static const std::string BASE_URL = "https://api.myanimelist.net/v2/";
 
-/*"opening_themes,ending_themes,synopsis,alternative_titles,media_type,my_list_"*/
-/*"status{start_date,finish_"*/
-/*"date,priority,comments}"*/
 class Client {
 	Auth            m_auth;
-	httplib::Client httpClient = httplib::Client("https://api.myanimelist.net");
+	mutable httplib::Client httpClient;
 
 	// Anime
 	std::string M__getAnimeList(
@@ -158,4 +155,5 @@ class Client {
 	friend void testGetMangaRanking(const Client&);
 	friend void testUpdateUserMangaListStatus(const Client&);
 	friend void testGetUserMangaList(const Client&);
+
 };
