@@ -9,22 +9,23 @@ using namespace nlohmann;
 static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
 static constexpr std::uint8_t OFFSET_DEFAULT = 0;
 static const std::string      FAILED_REQUEST_TEXT =
-    "{\"message\" : \"failed_request\", \"message\": \"\"}";
+    "{\"error\" : \"failed_request\", \"message\": \"failed request\"}";
 
 static void printResult(const httplib::Result& res) {
-	std::cout << "status_code : " << res->status << std::endl;
-	std::cout << "text        : " << res->body << std::endl;
-	//std::cout << "raw_header  : " << res.headers << std::endl;
-	std::cout << "reason      : " << res->reason << std::endl;
+	std::cout << "status_code : " << res->status << "\nbody        : " << res->body
+		  << "\nreason      : " << res->reason << "\n";
 }
 
 static const std::string& handleReturn(const httplib::Result& res) {
 	if(res) {
 		if(res->status == 200) {
-			std::cout << res->body << std::endl;
+			//std::cout << res->body << std::endl;
 			return res->body;
 		}
-		return FAILED_REQUEST_TEXT;
+		std::cout << "\033[91mError: " << res->reason << std::endl;
+		printResult(res);
+		std::cout << "\033[0m";
+		return res->body;
 	} else {
 		auto err = res.error();
 		std::cout << "\033[91mError: " << err << std::endl;
@@ -105,15 +106,17 @@ std::string Client::M__getAnimeRanking(
 	httplib::Params params;
 
 	switch(rankingType) {
-		case all: params.emplace("ranking_type", "all"); break;
-		case airing: params.emplace("ranking_type", "airing"); break;
-		case upcoming: params.emplace("ranking_type", "upcoming"); break;
-		case tv: params.emplace("ranking_type", "tv"); break;
-		case ova: params.emplace("ranking_type", "ova"); break;
-		case movie: params.emplace("ranking_type", "movie"); break;
-		case special: params.emplace("ranking_type", "special"); break;
-		case bypopularity: params.emplace("ranking_type", "bypopularity"); break;
-		case favorite: params.emplace("ranking_type", "favorite"); break;
+		// clang-format off
+		case  AnimeRankingType::all          :  params.emplace("ranking_type", "all"          ); break;
+		case  AnimeRankingType::airing       :  params.emplace("ranking_type", "airing"       ); break;
+		case  AnimeRankingType::upcoming     :  params.emplace("ranking_type", "upcoming"     ); break;
+		case  AnimeRankingType::tv           :  params.emplace("ranking_type", "tv"           ); break;
+		case  AnimeRankingType::ova          :  params.emplace("ranking_type", "ova"          ); break;
+		case  AnimeRankingType::movie        :  params.emplace("ranking_type", "movie"        ); break;
+		case  AnimeRankingType::special      :  params.emplace("ranking_type", "special"      ); break;
+		case  AnimeRankingType::bypopularity :  params.emplace("ranking_type", "bypopularity" ); break;
+		case  AnimeRankingType::favorite     :  params.emplace("ranking_type", "favorite"     ); break;
+			// clang-format on
 	}
 
 	httplib::Client httpClient("https://api.myanimelist.net");
@@ -211,13 +214,13 @@ std::string Client::M__updateUserAnimeListStatus(
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
-			case watching: params.emplace("status", "watching"); break;
-			case completed: params.emplace("status", "completed"); break;
-			case on_hold: params.emplace("status", "on_hold"); break;
-			case dropped: params.emplace("status", "dropped"); break;
-			case plan_to_watch:
-				params.emplace("status", "plan_to_watch");
-				break;
+				// clang-format off
+				case AnimeStatusParam::watching      :  params.emplace("status", "watching"      ); break;
+				case AnimeStatusParam::completed     :  params.emplace("status", "completed"     ); break;
+				case AnimeStatusParam::on_hold       :  params.emplace("status", "on_hold"       ); break;
+				case AnimeStatusParam::dropped       :  params.emplace("status", "dropped"       ); break;
+				case AnimeStatusParam::plan_to_watch :  params.emplace("status", "plan_to_watch" ); break;
+				// clang-format on
 		}
 
 	if(score.has_value()) params.emplace("score", std::to_string(score.value()));
@@ -261,24 +264,23 @@ std::string Client::M__getUserAnimeList(
 	httplib::Params params;
 
 	if(sort.has_value()) switch(sort.value()) {
-			case list_score: params.emplace("sort", "list_score"); break;
-			case list_updated_at:
-				params.emplace("sort", "list_updated_at");
-				break;
-			case anime_title: params.emplace("sort", "anime_title"); break;
-			case anime_start_date:
-				params.emplace("sort", "anime_start_date");
-				break;
-			case anime_id: params.emplace("sort", "anime_id"); break;
+				// clang-format off
+			case UserAnimeSortParam::list_score       :  params.emplace("sort", "list_score"); break;
+			case UserAnimeSortParam::list_updated_at  :  params.emplace("sort", "list_updated_at"); break;
+			case UserAnimeSortParam::anime_title      :  params.emplace("sort", "anime_title"); break;
+			case UserAnimeSortParam::anime_start_date :  params.emplace("sort", "anime_start_date"); break;
+			case UserAnimeSortParam::anime_id         :  params.emplace("sort", "anime_id"); break;
+				// clang-format on
 		}
+
 	if(status.has_value()) switch(status.value()) {
-			case watching: params.emplace("status", "watching"); break;
-			case completed: params.emplace("status", "completed"); break;
-			case on_hold: params.emplace("status", "on_hold"); break;
-			case dropped: params.emplace("status", "dropped"); break;
-			case plan_to_watch:
-				params.emplace("status", "plan_to_watch");
-				break;
+				// clang-format off
+			case AnimeStatusParam::watching      :  params.emplace("status", "watching"); break;
+			case AnimeStatusParam::completed     :  params.emplace("status", "completed"); break;
+			case AnimeStatusParam::on_hold       :  params.emplace("status", "on_hold"); break;
+			case AnimeStatusParam::dropped       :  params.emplace("status", "dropped"); break;
+			case AnimeStatusParam::plan_to_watch :  params.emplace("status", "plan_to_watch"); break;
+				// clang-format on
 		}
 
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
@@ -329,8 +331,7 @@ std::string Client::M__getForumTopicDetail(
 	    httpClient.Get(httplib::append_query_params(
 			       ("/v2/forum/topic/" + std::to_string(topicId)).c_str(),
 			       params)
-			       .c_str())
-	);
+			       .c_str()));
 }
 
 std::string Client::M__getForumTopics(
@@ -346,7 +347,9 @@ std::string Client::M__getForumTopics(
 	httplib::Params params;
 
 	if(sort.has_value()) switch(sort.value()) {
-			case recent: params.emplace("sort", "recent"); break;
+			case ForumSortParam::recent:
+				params.emplace("sort", "recent");
+				break;
 		}
 
 	if(boardId.has_value())
@@ -420,18 +423,18 @@ std::string Client::M__getMangaRanking(
 	httplib::Params params;
 
 	switch(rankingType) {
-		case m_all: params.emplace("ranking_type", "all"); break;
-		case m_bypopularity:
-			params.emplace("ranking_type", "bypopularity");
-			break;
-		case m_favorite: params.emplace("ranking_type", "favorite"); break;
-		case manga: params.emplace("ranking_type", "manga"); break;
-		case oneshots: params.emplace("ranking_type", "oneshots"); break;
-		case doujin: params.emplace("ranking_type", "doujin"); break;
-		case lightnovels: params.emplace("ranking_type", "lightnovels"); break;
-		case novels: params.emplace("ranking_type", "novels"); break;
-		case manhwa: params.emplace("ranking_type", "manhwa"); break;
-		case manhua: params.emplace("ranking_type", "manhua"); break;
+			// clang-format off
+		case MangaRankingTypeParam::all          :  params.emplace("ranking_type", "all"          ); break;
+		case MangaRankingTypeParam::bypopularity :  params.emplace("ranking_type", "bypopularity" ); break;
+		//case MangaRankingTypeParam::favorite     :  params.emplace("ranking_type", "favorite"     ); break;
+		//case MangaRankingTypeParam::manga        :  params.emplace("ranking_type", "manga"        ); break;
+		//case MangaRankingTypeParam::oneshots     :  params.emplace("ranking_type", "oneshots"     ); break;
+		//case MangaRankingTypeParam::doujin       :  params.emplace("ranking_type", "doujin"       ); break;
+		//case MangaRankingTypeParam::lightnovels  :  params.emplace("ranking_type", "lightnovels"  ); break;
+		//case MangaRankingTypeParam::novels       :  params.emplace("ranking_type", "novels"       ); break;
+		//case MangaRankingTypeParam::manhwa       :  params.emplace("ranking_type", "manhwa"       ); break;
+		//case MangaRankingTypeParam::manhua       :  params.emplace("ranking_type", "manhua"       ); break;
+			// clang-format on
 	}
 
 	if(fields.has_value()) params.emplace("fields", fields.value());
@@ -444,8 +447,11 @@ std::string Client::M__getMangaRanking(
 	    {"Accept", "application/json"},
 	});
 
-	return handleReturn((httpClient.Get(
-	    httplib::append_query_params("/v2/anime/ranking", params).c_str())));
+	std::string str = httplib::append_query_params("/v2/anime/ranking", params);
+	//str = "/v2/anime/ranking?limit=4&ranking_type=manga";
+	//str = "/v2/anime/ranking?ranking_type=manga&limit=4";
+
+	return handleReturn((httpClient.Get(str.c_str())));
 }
 
 //# User Manga
@@ -465,13 +471,13 @@ std::string Client::M__updateUserMangaListStatus(
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
-			case reading: params.emplace("status", "reading"); break;
-			case ms_completed: params.emplace("status", "completed"); break;
-			case ms_on_hold: params.emplace("status", "on_hold"); break;
-			case ms_dropped: params.emplace("status", "dropped"); break;
-			case plan_to_read:
-				params.emplace("status", "plan_to_read");
-				break;
+				// clang-format off
+			case MangaStatusParam::reading      :  params.emplace("status", "reading"      ); break;
+			case MangaStatusParam::completed :  params.emplace("status", "completed"    ); break;
+			case MangaStatusParam::on_hold   :  params.emplace("status", "on_hold"      ); break;
+			case MangaStatusParam::dropped   :  params.emplace("status", "dropped"      ); break;
+			case MangaStatusParam::plan_to_read :  params.emplace("status", "plan_to_read" ); break;
+				// clang-format on
 		}
 
 	if(isReReading.has_value())
@@ -517,25 +523,23 @@ std::string Client::M__getUserMangaList(
 	httplib::Params params;
 
 	if(sort.has_value()) switch(sort.value()) {
-			case ms_list_score: params.emplace("sort", "list_score"); break;
-			case ms_list_updated_at:
-				params.emplace("sort", "list_updated_at");
-				break;
-			case manga_title: params.emplace("sort", "manga_title"); break;
-			case manga_start_date:
-				params.emplace("sort", "manga_start_date");
-				break;
-			case manga_id: params.emplace("sort", "manga_id"); break;
+			// clang-format off
+			case MangaSortParam::list_score      :  params.emplace("sort", "list_score"       ); break;
+			case MangaSortParam::list_updated_at :  params.emplace("sort", "list_updated_at"  ); break;
+			case MangaSortParam::manga_title        :  params.emplace("sort", "manga_title"      ); break;
+			case MangaSortParam::manga_start_date   :  params.emplace("sort", "manga_start_date" ); break;
+			case MangaSortParam::manga_id           :  params.emplace("sort", "manga_id"         ); break;
+				// clang-format on
 		}
 
 	if(status.has_value()) switch(status.value()) {
-			case reading: params.emplace("status", "reading"); break;
-			case ms_completed: params.emplace("status", "completed"); break;
-			case ms_on_hold: params.emplace("status", "on_hold"); break;
-			case ms_dropped: params.emplace("status", "dropped"); break;
-			case plan_to_read:
-				params.emplace("status", "plan_to_read");
-				break;
+			// clang-format off
+			case MangaStatusParam::reading      :  params.emplace("status", "reading"      ); break;
+			case MangaStatusParam::completed :  params.emplace("status", "completed"    ); break;
+			case MangaStatusParam::on_hold   :  params.emplace("status", "on_hold"      ); break;
+			case MangaStatusParam::dropped   :  params.emplace("status", "dropped"      ); break;
+			case MangaStatusParam::plan_to_read :  params.emplace("status", "plan_to_read" ); break;
+				// clang-format on
 		}
 
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));

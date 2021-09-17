@@ -1,8 +1,8 @@
 #pragma once
 #include "./auth.hpp"
 #include "./clientTypes.hpp"
-#include "malapi/client.hpp"
 #include "httplib.hpp"
+#include "malapi/client.hpp"
 
 #include <optional>
 #include <string>
@@ -29,14 +29,14 @@ class Client {
 
 	std::string M__getAnimeRanking(
 	    std::optional<std::string> fields      = std::nullopt,
-	    AnimeRankingType           rankingType = all,
+	    AnimeRankingType           rankingType = AnimeRankingType::all,
 	    std::uint8_t               limit       = 100,
 	    std::uint8_t               offset      = 0) const;
 
 	std::string M__getSeasonalAnime(
 	    std::uint32_t              year,
 	    SeasonParam                season,
-	    SeasonSortParam            sort   = anime_score,
+	    SeasonSortParam            sort   = SeasonSortParam::anime_score,
 	    std::optional<std::string> fields = std::nullopt,
 	    std::uint8_t               limit  = 100,
 	    std::uint8_t               offset = 0) const;
@@ -97,7 +97,7 @@ class Client {
 	    std::optional<std::string> fields = std::nullopt) const;
 
 	std::string M__getMangaRanking(
-	    MangaRankingTypeParam      rankingType = m_all,
+	    MangaRankingTypeParam      rankingType = MangaRankingTypeParam::all,
 	    std::uint8_t               limit       = 100,
 	    std::uint8_t               offset      = 0,
 	    std::optional<std::string> fields      = std::nullopt) const;
