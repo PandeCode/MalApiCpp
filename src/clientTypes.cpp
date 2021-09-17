@@ -11,10 +11,10 @@
 		    NLOHMANN_JSON_PASTE(NLOHMANN_JSON_FROM, __VA_ARGS__))                \
 	}
 
-//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_NON_INLINE(
-//UserData,
-//id,
-//birthday,
-//joined_at,
-//location,
-//name);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_NON_INLINE(
+    UserObject,
+    id,
+    birthday,
+    joined_at,
+    location,
+    name);

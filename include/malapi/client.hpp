@@ -253,7 +253,7 @@ class Client {
 
 	//# User
 	template <class ReturnType = std::string>
-	ReturnType getUserData(
+	std::variant<std::string, UserObject> getUserData(
 	    std::string                userName = "@me",
 	    std::optional<std::string> fields   = std::nullopt) const;
 

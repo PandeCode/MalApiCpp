@@ -1,8 +1,11 @@
 #include "malapi/client.hpp"
 
 #include "httplib.hpp"
+#include "malapi/clientTypes.hpp"
 
 #include <iostream>
+#include <type_traits>
+#include <variant>
 
 using namespace nlohmann;
 
@@ -186,7 +189,7 @@ std::string Client::M__updateUserAnimeListStatus(
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
-			// clang-format off
+				// clang-format off
 				case AnimeStatusParam::watching      :  params.emplace("status", "watching"      ); break;
 				case AnimeStatusParam::completed     :  params.emplace("status", "completed"     ); break;
 				case AnimeStatusParam::on_hold       :  params.emplace("status", "on_hold"       ); break;
@@ -664,9 +667,13 @@ ReturnType Client::getUserMangaList(
 
 //# User
 template <class ReturnType>
-ReturnType
+std::variant<std::string, UserObject>
     Client::getUserData(std::string userName, std::optional<std::string> fields) const {
-	return M__getUserData(userName, fields);
+	if(std::is_same<UserObject, ReturnType>())
+		return nlohmann::json::parse(M__getUserData(userName, fields))
+		    .get<UserObject>();
+	else
+		return M__getUserData(userName, fields);
 }
 
 bool Client::deleteUserAnime(std::uint32_t animeId) const {
@@ -713,4 +720,5 @@ void Client::___defs() {
 
 	// User
 	getUserData<std::string>("");
+	getUserData<UserObject>("");
 }

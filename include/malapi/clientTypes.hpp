@@ -1,3 +1,4 @@
+#pragma once
 #include "../nlohmann/json.hpp"
 
 #include <cstdint>
@@ -104,8 +105,6 @@ enum class MangaSortParam : std::uint8_t {
 
 struct UserMangaListStatusUpdate {};
 
-//DECL_JSON(UserData);
-
 // CalendarDate A simple date formatted as yyyymmdd (e.g. 20070208).
 typedef std::string CalendarDate;
 
@@ -180,6 +179,7 @@ struct UserObject {
 	std::string   name;      //
 	std::string   location;  //
 	std::string   joined_at; //
+	std::string   birthday;
 };
 
 // AnimeObject An AnimeObject represents an anime in MAL’s database.
@@ -227,3 +227,5 @@ struct AnimeObject {
 		    rating; //  The rating of this anime (g All Ages, pg Children, pg_13 Teens 13 and Older, r 17+ (violence & profanity), r+ Profanity & Mild Nudity, rx Hentai).
 	};
 };
+
+DECL_JSON(UserObject);
