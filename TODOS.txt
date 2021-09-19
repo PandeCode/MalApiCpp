@@ -1,3 +1,4 @@
+- Use Namespaces
 Add Enum of Fields and every method that requires fields can have a vector to add the fields make a genfields method
 
 

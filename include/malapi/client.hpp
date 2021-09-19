@@ -1,18 +1,16 @@
 #pragma once
-#include "./auth.hpp"
-#include "./clientTypes.hpp"
 #include "httplib.hpp"
+#include "malapi/auth.hpp"
 #include "malapi/client.hpp"
+#include "malapi/types/client.hpp"
 
 #include <optional>
 #include <string>
 
-static const std::string BASE_URL = "https://api.myanimelist.net/v2/";
-
 class Client {
 	Auth                    m_auth;
 	mutable httplib::Client httpClient;
-	void                    ___defs();
+	void                    ___defs(); // To get templates correct predefined
 
 	// Anime
 	std::string M__getAnimeList(
@@ -130,14 +128,14 @@ class Client {
 	//
 	// Anime
 	template <class ReturnType = std::string>
-	ReturnType getAnimeList(
+	std::variant<std::string, AnimeList> getAnimeList(
 	    std::string                query,
 	    std::optional<std::string> fields = std::nullopt,
 	    std::uint8_t               limit  = 100,
 	    std::uint8_t               offset = 0) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getAnimeDetails(
+	std::variant<std::string, AnimeDetails> getAnimeDetails(
 	    std::uint32_t              animeId,
 	    std::optional<std::string> fields = std::nullopt) const;
 

@@ -20,27 +20,13 @@ project(MalApi VERSION 0.1.0 DESCRIPTION "My Anime List Api Client" LANGUAGES CX
 
 find_package(Threads REQUIRED)
 
-link_directories(${CMAKE_SOURCE_DIR}/libs)
+file(GLOB_RECURSE __MALAPI_SRC_FILES ${CMAKE_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE __MALAPI_TYPE_SRC_FILES ${CMAKE_SOURCE_DIR}/src/types/*.cpp)
+set(MALAPI_SRC_FILES ${__MALAPI_TYPE_SRC_FILES} ${__MALAPI_SRC_FILES})
 
-file(
-  GLOB_RECURSE
-  MALAPI_SRC_FILES
-  ${CMAKE_SOURCE_DIR}/src/*.cpp
-)
+set(MALAPI_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/include)
 
-set(
-  _INCLUDE_DIRS
-)
-set(
-  MALAPI_INCLUDE_DIRS
-  ${CMAKE_SOURCE_DIR}/include
-  ${_INCLUDE_DIRS}
-)
-
-set(
-  _LIBRARIES
-  ${CMAKE_THREAD_LIBS_INIT}
-)
+set(_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
 set(MALAPI_LIBRARY malapi)
 set(MALAPI_LIBRARIES ${MALAPI_LIBRARY})
@@ -60,15 +46,18 @@ target_include_directories(${MALAPI_LIBRARY} PRIVATE ${MALAPI_INCLUDE_DIRS})
 target_precompile_headers(
   ${MALAPI_LIBRARY}
   PUBLIC
-  <iostream>
-  <fstream>
-  <optional>
-  <variant>
   <array>
-  <vector>
+  <cstdint>
+  <fstream>
+  <sstream>
+  <iostream>
+  <optional>
   <sstream>
   <type_traits>
+  <variant>
+  <vector>
   ${CMAKE_SOURCE_DIR}/include/httplib.hpp
+  ${CMAKE_SOURCE_DIR}/include/nlohmann/json.hpp
 )
 
 add_subdirectory(tests)

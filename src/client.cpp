@@ -1,13 +1,49 @@
 #include "malapi/client.hpp"
 
 #include "httplib.hpp"
-#include "malapi/clientTypes.hpp"
+#include "malapi/auth.hpp"
+#include "malapi/client.hpp"
+#include "malapi/jsonDefinitions.hpp"
+#include "nlohmann/json.hpp"
 
 #include <iostream>
+#include <optional>
+#include <string>
 #include <type_traits>
 #include <variant>
 
 using namespace nlohmann;
+// clang-format off
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( AnimeObjectNode, id, main_picture, title, alternative_titles, average_episode_duration, broadcast, created_at, end_date, genres, mean, media_type, nsfw, num_episodes, num_favorites, num_list_users, num_scoring_users, popularity, rank, start_date, start_season, status, synopsis, source, studio, updated_at, my_list_status, background, related_anime, rating);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( MyListStatusObject, comments, is_rewatching, num_episodes_watched, num_times_rewatched, priority, rewatch_value, score, status, tags, updated_at);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AlternativeTitlesObject, en, ja, synonyms);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeList, data);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeObject, node);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeStudioObject, id, name);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BroadcastObject, day_of_the_week, start_time);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PictureObject, large, medium);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SeasonObject, season, year);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserObject, id, birthday, joined_at, location, name);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenreObject, id, name);
+
+#if 0
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeRanking , );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoards, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoardsTopicDetail, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoardsTopics, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumTopics, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenreObject, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaDetails, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaList, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaRanking, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SeasonalAnime, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserAnimeList, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserAnimeListStatus, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserMangaList, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserMangaListStatusUpdate, );
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserSuggestedAnime, );
+#endif
+// clang-format on
 
 static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
 static constexpr std::uint8_t OFFSET_DEFAULT = 0;
@@ -485,19 +521,32 @@ std::string Client::M__getUserData(
 }
 
 template <class ReturnType>
-ReturnType Client::getAnimeList(
+std::variant<std::string, AnimeList> Client::getAnimeList(
     std::string                query,
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	return M__getAnimeList(query, fields, limit, offset);
+	if(std::is_same<AnimeList, ReturnType>())
+		return nlohmann::json::parse(
+			   M__getAnimeList(query, fields, limit, offset))
+		    .get<AnimeList>();
+	else if(std::is_same<std::string, ReturnType>())
+		return M__getAnimeList(query, fields, limit, offset);
+	else
+		throw std::string("Wrong Template parameter");
 }
 
 template <class ReturnType>
-ReturnType Client::getAnimeDetails(
+std::variant<std::string, AnimeDetails> Client::getAnimeDetails(
     std::uint32_t              animeId,
     std::optional<std::string> fields) const {
-	return M__getAnimeDetails(animeId, fields);
+	if(std::is_same<AnimeDetails, ReturnType>())
+		return nlohmann::json::parse(M__getAnimeDetails(animeId, fields))
+		    .get<AnimeObject>();
+	else if(std::is_same<std::string, ReturnType>())
+		return M__getAnimeDetails(animeId, fields);
+	else
+		throw std::string("Wrong Template parameter");
 }
 
 template <class ReturnType>
@@ -695,7 +744,11 @@ bool Client::deleteUserMangaListItem(std::uint32_t mangaId) const {
 void Client::___defs() {
 	// Anime
 	getAnimeList<std::string>("");
+	getAnimeList<AnimeList>("");
+
 	getAnimeDetails<std::string>(0);
+	getAnimeDetails<AnimeObject>(0);
+
 	getAnimeRanking<std::string>();
 	getSeasonalAnime<std::string>(0, SeasonParam ::fall);
 
