@@ -20,6 +20,27 @@ DEF_OPERATOR(AnimeObjectNode);
 DEF_OPERATOR(AnimeObject);
 DEF_OPERATOR(AnimeList);
 
+#define VOID_TO_STRING(Type)                         \
+	std::string Type::toString() const {         \
+		std::stringstream returnString;      \
+		returnString << #Type << " String."; \
+		return returnString.str();           \
+	}
+
+VOID_TO_STRING(AnimeRanking);
+VOID_TO_STRING(ForumBoards);
+VOID_TO_STRING(ForumTopicDetail);
+VOID_TO_STRING(ForumTopics);
+VOID_TO_STRING(MangaDetails);
+VOID_TO_STRING(MangaList);
+VOID_TO_STRING(MangaRanking);
+VOID_TO_STRING(SeasonalAnime);
+VOID_TO_STRING(UserAnimeList);
+VOID_TO_STRING(UserAnimeListStatus);
+VOID_TO_STRING(UserMangaList);
+VOID_TO_STRING(UserMangaListStatusUpdate);
+VOID_TO_STRING(UserSuggestedAnime);
+
 template <typename T>
 std::ostream& operator<<(std::ostream& stream, const std::vector<T>& listType) {
 	stream << "{ ";
@@ -73,6 +94,7 @@ std::string AlternativeTitlesObject::toString() const {
 	// clang-format on
 	return returnString.str();
 }
+
 std::string AnimeStudioObject::toString() const {
 	std::stringstream returnString;
 	// clang-format off

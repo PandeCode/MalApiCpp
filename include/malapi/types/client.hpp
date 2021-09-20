@@ -138,7 +138,9 @@ struct AnimeList {
 	std::string toString() const;
 };
 
-struct AnimeRanking {};
+struct AnimeRanking {
+	std::string toString() const;
+};
 
 enum class AnimeRankingType : std::uint8_t {
 	all,          ///Top Anime Series
@@ -152,7 +154,10 @@ enum class AnimeRankingType : std::uint8_t {
 	favorite,     ///Top Favorited Anime
 };
 
-struct SeasonalAnime {};
+struct SeasonalAnime {
+
+	std::string toString() const;
+};
 
 enum class SeasonParam : std::uint8_t {
 	winter, /// January, February, March
@@ -166,9 +171,13 @@ enum class SeasonSortParam : std::uint8_t {
 };
 
 // UserAnime
-struct UserSuggestedAnime {};
+struct UserSuggestedAnime {
+	std::string toString() const;
+};
 
-struct UserAnimeListStatus {};
+struct UserAnimeListStatus {
+	std::string toString() const;
+};
 enum class AnimeStatusParam : std::uint8_t {
 	watching,
 	completed,
@@ -184,18 +193,34 @@ enum class UserAnimeSortParam : std::uint8_t {
 	anime_id,         // (Under Development) Ascending
 };
 
-struct UserAnimeList {};
+struct UserAnimeList {
+
+	std::string toString() const;
+};
 
 // Forum
-struct ForumBoards {};
-struct ForumBoardsTopicDetail {};
-struct ForumBoardsTopics {};
+struct ForumBoards {
+	std::string toString() const;
+};
+struct ForumTopicDetail {
+	std::string toString() const;
+};
+struct ForumTopics {
+	std::string toString() const;
+};
 enum class ForumSortParam : std::uint8_t { recent };
 
 //Manga
-struct MangaList {};
-struct MangaDetails {};
-struct MangaRanking {};
+struct MangaList {
+
+	std::string toString() const;
+};
+struct MangaDetails {
+	std::string toString() const;
+};
+struct MangaRanking {
+	std::string toString() const;
+};
 
 enum class MangaRankingTypeParam : std::uint8_t {
 	all,          // All
@@ -211,7 +236,12 @@ enum class MangaRankingTypeParam : std::uint8_t {
 };
 
 //UserManga
-struct UserMangaList {};
+struct UserMangaListStatus {
+	std::string toString() const;
+};
+struct UserMangaList {
+	std::string toString() const;
+};
 enum class MangaStatusParam : std::uint8_t {
 	reading,
 	completed,
@@ -228,4 +258,7 @@ enum class MangaSortParam : std::uint8_t {
 	manga_id,         // (Under Development)	Ascending
 };
 
-struct UserMangaListStatusUpdate {};
+struct UserMangaListStatusUpdate {
+	std::string toString() const;
+};
+

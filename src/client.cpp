@@ -26,23 +26,25 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SeasonObject, season, year);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserObject, id, birthday, joined_at, location, name);
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenreObject, id, name);
 
-#if 0
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeRanking , );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoards, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoardsTopicDetail, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumBoardsTopics, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ForumTopics, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenreObject, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaDetails, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaList, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MangaRanking, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SeasonalAnime, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserAnimeList, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserAnimeListStatus, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserMangaList, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserMangaListStatusUpdate, );
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserSuggestedAnime, );
-#endif
+
+#define NLOHMANN_DEFINE(Type)\
+    void to_json(nlohmann::json& , const Type& ) { } \
+    void from_json(const nlohmann::json& , Type& ) { }
+
+
+NLOHMANN_DEFINE(AnimeRanking );
+NLOHMANN_DEFINE(ForumBoards);
+NLOHMANN_DEFINE(ForumTopics);
+NLOHMANN_DEFINE(ForumTopicDetail);
+NLOHMANN_DEFINE(MangaDetails);
+NLOHMANN_DEFINE(MangaList);
+NLOHMANN_DEFINE(MangaRanking);
+NLOHMANN_DEFINE(SeasonalAnime);
+NLOHMANN_DEFINE(UserAnimeList);
+NLOHMANN_DEFINE(UserAnimeListStatus);
+NLOHMANN_DEFINE(UserMangaList);
+NLOHMANN_DEFINE(UserMangaListStatusUpdate);
+NLOHMANN_DEFINE(UserSuggestedAnime);
 // clang-format on
 
 static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
@@ -225,7 +227,7 @@ std::string Client::M__updateUserAnimeListStatus(
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
-				// clang-format off
+			// clang-format off
 				case AnimeStatusParam::watching      :  params.emplace("status", "watching"      ); break;
 				case AnimeStatusParam::completed     :  params.emplace("status", "completed"     ); break;
 				case AnimeStatusParam::on_hold       :  params.emplace("status", "on_hold"       ); break;
@@ -520,67 +522,64 @@ std::string Client::M__getUserData(
 		.c_str()));
 }
 
+#define DEF_OPT(OBJECT, FUNCTION)                                     \
+	if(std::is_same<OBJECT, ReturnType>())                        \
+		return nlohmann::json::parse(FUNCTION).get<OBJECT>(); \
+	else if(std::is_same<std::string, ReturnType>())              \
+		return FUNCTION;                                      \
+	else                                                          \
+		throw std::string("Wrong Template parameter " #OBJECT);
+
 template <class ReturnType>
 std::variant<std::string, AnimeList> Client::getAnimeList(
     std::string                query,
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	if(std::is_same<AnimeList, ReturnType>())
-		return nlohmann::json::parse(
-			   M__getAnimeList(query, fields, limit, offset))
-		    .get<AnimeList>();
-	else if(std::is_same<std::string, ReturnType>())
-		return M__getAnimeList(query, fields, limit, offset);
-	else
-		throw std::string("Wrong Template parameter");
+	DEF_OPT(AnimeList, M__getAnimeList(query, fields, limit, offset));
 }
 
 template <class ReturnType>
 std::variant<std::string, AnimeDetails> Client::getAnimeDetails(
     std::uint32_t              animeId,
     std::optional<std::string> fields) const {
-	if(std::is_same<AnimeDetails, ReturnType>())
-		return nlohmann::json::parse(M__getAnimeDetails(animeId, fields))
-		    .get<AnimeObject>();
-	else if(std::is_same<std::string, ReturnType>())
-		return M__getAnimeDetails(animeId, fields);
-	else
-		throw std::string("Wrong Template parameter");
+	DEF_OPT(AnimeDetails, M__getAnimeDetails(animeId, fields));
 }
 
 template <class ReturnType>
-ReturnType Client::getAnimeRanking(
+std::variant<std::string, AnimeRanking> Client::getAnimeRanking(
     std::optional<std::string> fields,
     AnimeRankingType           rankingType,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	return M__getAnimeRanking(fields, rankingType, limit, offset);
+	DEF_OPT(AnimeRanking, M__getAnimeRanking(fields, rankingType, limit, offset));
 }
 
 template <class ReturnType>
-ReturnType Client::getSeasonalAnime(
+std::variant<std::string, SeasonalAnime> Client::getSeasonalAnime(
     std::uint32_t              year,
     SeasonParam                season,
     SeasonSortParam            sort,
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	return M__getSeasonalAnime(year, season, sort, fields, limit, offset);
+	DEF_OPT(
+	    SeasonalAnime,
+	    M__getSeasonalAnime(year, season, sort, fields, limit, offset));
 }
 
 // User Anime
 
 template <class ReturnType>
-ReturnType Client::getUserSuggestedAnime(
+std::variant<std::string, UserSuggestedAnime> Client::getUserSuggestedAnime(
     std::uint8_t               limit,
     std::uint8_t               offset,
     std::optional<std::string> fields) const {
-	return M__getUserSuggestedAnime(limit, offset, fields);
+	DEF_OPT(UserSuggestedAnime, M__getUserSuggestedAnime(limit, offset, fields));
 }
 
 template <class ReturnType>
-ReturnType Client::updateUserAnimeListStatus(
+std::variant<std::string, UserAnimeListStatus> Client::updateUserAnimeListStatus(
     std::uint32_t                   animeId,
     std::optional<AnimeStatusParam> status,
     std::optional<int>              score,
@@ -605,31 +604,34 @@ ReturnType Client::updateUserAnimeListStatus(
 }
 
 template <class ReturnType>
-ReturnType Client::getUserAnimeList(
+std::variant<std::string, UserAnimeList> Client::getUserAnimeList(
     std::string                       userName,
     std::optional<AnimeStatusParam>   status,
     std::optional<UserAnimeSortParam> sort,
     std::uint8_t                      limit,
     std::uint8_t                      offset) const {
-	return M__getUserAnimeList(userName, status, sort, limit, offset);
+	DEF_OPT(
+	    UserAnimeList,
+	    M__getUserAnimeList(userName, status, sort, limit, offset));
 }
 
 //# Forums
 
 template <class ReturnType>
-ReturnType Client::getForumBoards() const {
-	return M__getForumBoards();
-}
-template <class ReturnType>
-ReturnType Client::getForumTopicDetail(
-    std::uint32_t topicId,
-    std::uint8_t  limit,
-    std::uint8_t  offset) const {
-	return M__getForumTopicDetail(topicId, limit, offset);
+std::variant<std::string, ForumBoards> Client::getForumBoards() const {
+	DEF_OPT(ForumBoards, M__getForumBoards());
 }
 
 template <class ReturnType>
-ReturnType Client::getForumTopics(
+std::variant<std::string, ForumTopicDetail> Client::getForumTopicDetail(
+    std::uint32_t topicId,
+    std::uint8_t  limit,
+    std::uint8_t  offset) const {
+	DEF_OPT(ForumTopicDetail, M__getForumTopicDetail(topicId, limit, offset));
+}
+
+template <class ReturnType>
+std::variant<std::string, ForumTopics> Client::getForumTopics(
     std::optional<std::uint32_t>  boardId,
     std::optional<std::uint32_t>  subboardId,
     std::optional<ForumSortParam> sort,
@@ -638,47 +640,49 @@ ReturnType Client::getForumTopics(
     std::optional<std::string>    userName,
     std::uint8_t                  limit,
     std::uint8_t                  offset) const {
-	return M__getForumTopics(
-	    boardId,
-	    subboardId,
-	    sort,
-	    query,
-	    topicUserName,
-	    userName,
-	    limit,
-	    offset);
+	DEF_OPT(
+	    ForumTopics,
+	    M__getForumTopics(
+		boardId,
+		subboardId,
+		sort,
+		query,
+		topicUserName,
+		userName,
+		limit,
+		offset));
 }
 
 //# Manga
 template <class ReturnType>
-ReturnType Client::getMangaList(
+std::variant<std::string, MangaList> Client::getMangaList(
     std::string                query,
     std::optional<std::string> fields,
     std::uint8_t               limit,
     std::uint8_t               offset) const {
-	return M__getMangaList(query, fields, limit, offset);
+	DEF_OPT(MangaList, M__getMangaList(query, fields, limit, offset));
 }
 
 template <class ReturnType>
-ReturnType Client::getMangaDetails(
+std::variant<std::string, MangaDetails> Client::getMangaDetails(
     std::uint32_t              mangaId,
     std::optional<std::string> fields) const {
-	return M__getMangaDetails(mangaId, fields);
+	DEF_OPT(MangaDetails, M__getMangaDetails(mangaId, fields));
 }
 
 template <class ReturnType>
-ReturnType Client::getMangaRanking(
+std::variant<std::string, MangaRanking> Client::getMangaRanking(
     MangaRankingTypeParam      rankingType,
     std::uint8_t               limit,
     std::uint8_t               offset,
     std::optional<std::string> fields) const {
-	return M__getMangaRanking(rankingType, limit, offset, fields);
+	DEF_OPT(MangaRanking, M__getMangaRanking(rankingType, limit, offset, fields));
 }
 
 //# User Manga
 
 template <class ReturnType>
-ReturnType Client::updateUserMangaListStatus(
+std::variant<std::string, UserMangaListStatus> Client::updateUserMangaListStatus(
     std::uint32_t                   mangaId,
     std::optional<MangaStatusParam> status,
     std::optional<bool>             isReReading,
@@ -705,24 +709,22 @@ ReturnType Client::updateUserMangaListStatus(
 }
 
 template <class ReturnType>
-ReturnType Client::getUserMangaList(
+std::variant<std::string, UserMangaList> Client::getUserMangaList(
     std::string                     userName,
     std::optional<MangaStatusParam> status,
     std::optional<MangaSortParam>   sort,
     std::uint8_t                    limit,
     std::uint8_t                    offset) const {
-	return M__getUserMangaList(userName, status, sort, limit, offset);
+	DEF_OPT(
+	    UserMangaList,
+	    M__getUserMangaList(userName, status, sort, limit, offset));
 }
 
 //# User
 template <class ReturnType>
 std::variant<std::string, UserObject>
     Client::getUserData(std::string userName, std::optional<std::string> fields) const {
-	if(std::is_same<UserObject, ReturnType>())
-		return nlohmann::json::parse(M__getUserData(userName, fields))
-		    .get<UserObject>();
-	else
-		return M__getUserData(userName, fields);
+	DEF_OPT(UserData, M__getUserData(userName, fields));
 }
 
 bool Client::deleteUserAnime(std::uint32_t animeId) const {
@@ -750,26 +752,45 @@ void Client::___defs() {
 	getAnimeDetails<AnimeObject>(0);
 
 	getAnimeRanking<std::string>();
+	getAnimeRanking<AnimeRanking>();
+
 	getSeasonalAnime<std::string>(0, SeasonParam ::fall);
+	getSeasonalAnime<SeasonalAnime>(0, SeasonParam ::fall);
 
 	// User Anime
 	getUserSuggestedAnime<std::string>();
+	getUserSuggestedAnime<UserSuggestedAnime>();
 	updateUserAnimeListStatus<std::string>(0);
+	updateUserAnimeListStatus<UserAnimeListStatus>(0);
 	getUserAnimeList<std::string>("");
+	getUserAnimeList<UserAnimeList>("");
 
 	// Forums
 	getForumBoards<std::string>();
+	getForumBoards<ForumBoards>();
+
 	getForumTopicDetail<std::string>(0);
+	getForumTopicDetail<ForumTopicDetail>(0);
+
 	getForumTopics<std::string>();
+	getForumTopics<ForumTopics>();
 
 	// Manga
 	getMangaList<std::string>("");
+	getMangaList<MangaList>("");
+
 	getMangaDetails<std::string>(0);
+	getMangaDetails<MangaDetails>(0);
+
 	getMangaRanking<std::string>(MangaRankingTypeParam::all);
+	getMangaRanking<MangaRanking>(MangaRankingTypeParam::all);
 
 	// User Manga
 	updateUserMangaListStatus<std::string>(0);
+	updateUserMangaListStatus<UserMangaListStatus>(0);
+
 	getUserMangaList<std::string>("");
+	getUserMangaList<UserMangaList>("");
 
 	// User
 	getUserData<std::string>("");

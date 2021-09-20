@@ -5,6 +5,10 @@
 	void to_json(nlohmann::json& nlohmann_json_j, const Type& nlohmann_json_t); \
 	void from_json(const nlohmann::json& nlohmann_json_j, Type& nlohmann_json_t);
 
+#define DEF_JSON(Type)                                                                \
+	void to_json(nlohmann::json& nlohmann_json_j, const Type& nlohmann_json_t) {} \
+	void from_json(const nlohmann::json& nlohmann_json_j, Type& nlohmann_json_t) {}
+
 #define TRY(EXP)     \
 	try {        \
 		EXP; \
@@ -24,14 +28,19 @@ DECL_JSON(AnimeObjectNode);
 DECL_JSON(AnimeRanking);
 DECL_JSON(AnimeStudioObject);
 DECL_JSON(BroadcastObject);
+
 DECL_JSON(ForumBoards);
-DECL_JSON(ForumBoardsTopicDetail);
+DECL_JSON(ForumTopicDetail);
 DECL_JSON(ForumTopics);
+
 DECL_JSON(GenreObject);
+
 DECL_JSON(MangaDetails);
 DECL_JSON(MangaList);
 DECL_JSON(MangaRanking);
+
 DECL_JSON(MyListStatusObject);
+
 DECL_JSON(PictureObject);
 DECL_JSON(SeasonObject);
 DECL_JSON(SeasonalAnime);

@@ -140,14 +140,14 @@ class Client {
 	    std::optional<std::string> fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getAnimeRanking(
+	std::variant<std::string, AnimeRanking> getAnimeRanking(
 	    std::optional<std::string> fields      = std::nullopt,
 	    AnimeRankingType           rankingType = AnimeRankingType::all,
 	    std::uint8_t               limit       = 100,
 	    std::uint8_t               offset      = 0) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getSeasonalAnime(
+	std::variant<std::string, SeasonalAnime> getSeasonalAnime(
 	    std::uint32_t              year,
 	    SeasonParam                season,
 	    SeasonSortParam            sort   = SeasonSortParam::anime_score,
@@ -158,13 +158,13 @@ class Client {
 	// User Anime
 
 	template <class ReturnType = std::string>
-	ReturnType getUserSuggestedAnime(
+	std::variant<std::string, UserSuggestedAnime> getUserSuggestedAnime(
 	    std::uint8_t               limit  = 100,
 	    std::uint8_t               offset = 0,
 	    std::optional<std::string> fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
-	ReturnType updateUserAnimeListStatus(
+	std::variant<std::string, UserAnimeListStatus> updateUserAnimeListStatus(
 	    std::uint32_t                   animeId,
 	    std::optional<AnimeStatusParam> status             = std::nullopt,
 	    std::optional<int>              score              = std::nullopt,
@@ -177,7 +177,7 @@ class Client {
 	    std::optional<std::string>      comments           = std::nullopt) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getUserAnimeList(
+	std::variant<std::string, UserAnimeList> getUserAnimeList(
 	    std::string                       userName = "@me",
 	    std::optional<AnimeStatusParam>   status   = std::nullopt,
 	    std::optional<UserAnimeSortParam> sort     = std::nullopt,
@@ -187,15 +187,16 @@ class Client {
 	//# Forums
 
 	template <class ReturnType = std::string>
-	ReturnType getForumBoards() const;
+	std::variant<std::string, ForumBoards> getForumBoards() const;
+
 	template <class ReturnType = std::string>
-	ReturnType getForumTopicDetail(
+	std::variant<std::string, ForumTopicDetail> getForumTopicDetail(
 	    std::uint32_t topicId,
 	    std::uint8_t  limit  = 100,
 	    std::uint8_t  offset = 0) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getForumTopics(
+	std::variant<std::string, ForumTopics> getForumTopics(
 	    std::optional<std::uint32_t>  boardId       = std::nullopt,
 	    std::optional<std::uint32_t>  subboardId    = std::nullopt,
 	    std::optional<ForumSortParam> sort          = std::nullopt,
@@ -207,19 +208,19 @@ class Client {
 
 	//# Manga
 	template <class ReturnType = std::string>
-	ReturnType getMangaList(
+	std::variant<std::string, MangaList> getMangaList(
 	    std::string                query,
 	    std::optional<std::string> fields = std::nullopt,
 	    std::uint8_t               limit  = 100,
 	    std::uint8_t               offset = 0) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getMangaDetails(
+	std::variant<std::string, MangaDetails> getMangaDetails(
 	    std::uint32_t              mangaId,
 	    std::optional<std::string> fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getMangaRanking(
+	std::variant<std::string, MangaRanking> getMangaRanking(
 	    MangaRankingTypeParam      rankingType = MangaRankingTypeParam::all,
 	    std::uint8_t               limit       = 100,
 	    std::uint8_t               offset      = 0,
@@ -228,7 +229,7 @@ class Client {
 	//# User Manga
 
 	template <class ReturnType = std::string>
-	ReturnType updateUserMangaListStatus(
+	std::variant<std::string, UserMangaListStatus> updateUserMangaListStatus(
 	    std::uint32_t                   mangaId,
 	    std::optional<MangaStatusParam> status          = std::nullopt,
 	    std::optional<bool>             isReReading     = std::nullopt,
@@ -242,7 +243,7 @@ class Client {
 	    std::optional<std::string>      comments        = std::nullopt) const;
 
 	template <class ReturnType = std::string>
-	ReturnType getUserMangaList(
+	std::variant<std::string, UserMangaList> getUserMangaList(
 	    std::string                     userName = "@me",
 	    std::optional<MangaStatusParam> status   = std::nullopt,
 	    std::optional<MangaSortParam>   sort     = std::nullopt,

@@ -130,12 +130,6 @@ void TestClient::testAll() const {
 	testAllObject();
 }
 
-#define VOID_DEF_STR_TEST(TEST, FUNCTION) \
-	void TestClient::TEST() const {}
-
-#define VOID_DEF_OBJ_TEST(TEST, FUNCTION) \
-	void TestClient::TEST() const {}
-
 #define DEF_STR_TEST(TEST, FUNCTION)                                          \
 	void TestClient::TEST() const {                                       \
 		auto res = std::get<0>(client.FUNCTION);                      \
@@ -147,17 +141,17 @@ void TestClient::testAll() const {
 DEF_STR_TEST(testStringGetAnimeList,          getAnimeList("mushoku", std::nullopt, 4, 0));
 DEF_STR_TEST(testStringGetAnimeDetails,       getAnimeDetails(39535));
 DEF_STR_TEST(testStringGetUserData,           getUserData());
-VOID_DEF_STR_TEST(testStringGetAnimeRanking,       getAnimeRanking(std::nullopt, AnimeRankingType::all, 4, 0));
-VOID_DEF_STR_TEST(testStringGetSeasonalAnime,      getSeasonalAnime(2021, SeasonParam::winter));
-VOID_DEF_STR_TEST(testStringGetUserSuggestedAnime, getUserSuggestedAnime(4));
-VOID_DEF_STR_TEST(testStringGetUserAnimeList,      getUserAnimeList());
-VOID_DEF_STR_TEST(testStringGetForumBoards,        getForumBoards());
-VOID_DEF_STR_TEST(testStringGetForumTopicDetail,   getForumTopicDetail(14, 4, 0));
-VOID_DEF_STR_TEST(testStringGetForumTopics,        getForumTopics());
-VOID_DEF_STR_TEST(testStringGetMangaList,          getMangaList("new game"));
-VOID_DEF_STR_TEST(testStringGetMangaDetails,       getMangaDetails(5114));
-VOID_DEF_STR_TEST(testStringGetMangaRanking,       getMangaRanking(MangaRankingTypeParam::all, 4));
-VOID_DEF_STR_TEST(testStringGetUserMangaList,      getUserMangaList("@me", std::nullopt, std::nullopt, 4));
+DEF_STR_TEST(testStringGetAnimeRanking,       getAnimeRanking(std::nullopt, AnimeRankingType::all, 4, 0));
+DEF_STR_TEST(testStringGetSeasonalAnime,      getSeasonalAnime(2021, SeasonParam::winter));
+DEF_STR_TEST(testStringGetUserSuggestedAnime, getUserSuggestedAnime(4));
+DEF_STR_TEST(testStringGetUserAnimeList,      getUserAnimeList());
+DEF_STR_TEST(testStringGetForumBoards,        getForumBoards());
+DEF_STR_TEST(testStringGetForumTopicDetail,   getForumTopicDetail(14, 4, 0));
+DEF_STR_TEST(testStringGetForumTopics,        getForumTopics());
+DEF_STR_TEST(testStringGetMangaList,          getMangaList("new game"));
+DEF_STR_TEST(testStringGetMangaDetails,       getMangaDetails(5114));
+DEF_STR_TEST(testStringGetMangaRanking,       getMangaRanking(MangaRankingTypeParam::all, 4));
+DEF_STR_TEST(testStringGetUserMangaList,      getUserMangaList("@me", std::nullopt, std::nullopt, 4));
 // clang-format on
 
 #define DEF_OBJ_TEST(TEST, FUNCTION)                           \
@@ -171,15 +165,15 @@ VOID_DEF_STR_TEST(testStringGetUserMangaList,      getUserMangaList("@me", std::
 DEF_OBJ_TEST(testObjectGetAnimeList,          getAnimeList<AnimeList>("mushoku", std::nullopt, 4, 0));
 DEF_OBJ_TEST(testObjectGetAnimeDetails,       getAnimeDetails<AnimeDetails>(39535));
 DEF_OBJ_TEST(testObjectGetUserData,           getUserData<UserDetails>());
-VOID_DEF_OBJ_TEST(testObjectGetAnimeRanking,       getAnimeRanking<AnimeRanking>(std::nullopt, AnimeRankingType::all, 4, 0));
-VOID_DEF_OBJ_TEST(testObjectGetSeasonalAnime,      getSeasonalAnime<SeasonalAnime>(2021, SeasonParam::winter));
-VOID_DEF_OBJ_TEST(testObjectGetUserSuggestedAnime, getUserSuggestedAnime<UserSuggestedAnime>(4));
-VOID_DEF_OBJ_TEST(testObjectGetUserAnimeList,      getUserAnimeList<UserAnimeList>());
-VOID_DEF_OBJ_TEST(testObjectGetForumBoards,        getForumBoards<ForumBoards>());
-VOID_DEF_OBJ_TEST(testObjectGetForumTopicDetail,   getForumTopicDetail<ForumBoardsTopicDetail>(14, 4, 0));
-VOID_DEF_OBJ_TEST(testObjectGetForumTopics,        getForumTopics<ForumTopics>());
-VOID_DEF_OBJ_TEST(testObjectGetMangaList,          getMangaList<MangaList>("new game"));
-VOID_DEF_OBJ_TEST(testObjectGetMangaDetails,       getMangaDetails<MangaDetails>(5114));
-VOID_DEF_OBJ_TEST(testObjectGetMangaRanking,       getMangaRanking<MangaRanking>(MangaRankingTypeParam::all, 4));
-VOID_DEF_OBJ_TEST(testObjectGetUserMangaList,      getUserMangaList<UserMangaList>("@me", std::nullopt, std::nullopt, 4));
+DEF_OBJ_TEST(testObjectGetAnimeRanking,       getAnimeRanking<AnimeRanking>(std::nullopt, AnimeRankingType::all, 4, 0));
+DEF_OBJ_TEST(testObjectGetSeasonalAnime,      getSeasonalAnime<SeasonalAnime>(2021, SeasonParam::winter));
+DEF_OBJ_TEST(testObjectGetUserSuggestedAnime, getUserSuggestedAnime<UserSuggestedAnime>(4));
+DEF_OBJ_TEST(testObjectGetUserAnimeList,      getUserAnimeList<UserAnimeList>());
+DEF_OBJ_TEST(testObjectGetForumBoards,        getForumBoards<ForumBoards>());
+DEF_OBJ_TEST(testObjectGetForumTopicDetail,   getForumTopicDetail<ForumTopicDetail>(14, 4, 0));
+DEF_OBJ_TEST(testObjectGetForumTopics,        getForumTopics<ForumTopics>());
+DEF_OBJ_TEST(testObjectGetMangaList,          getMangaList<MangaList>("new game"));
+DEF_OBJ_TEST(testObjectGetMangaDetails,       getMangaDetails<MangaDetails>(5114));
+DEF_OBJ_TEST(testObjectGetMangaRanking,       getMangaRanking<MangaRanking>(MangaRankingTypeParam::all, 4));
+DEF_OBJ_TEST(testObjectGetUserMangaList,      getUserMangaList<UserMangaList>("@me", std::nullopt, std::nullopt, 4));
 // clang-format on
