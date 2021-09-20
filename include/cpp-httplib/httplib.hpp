@@ -5,7 +5,6 @@
 //  MIT License
 //
 
-#define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H

@@ -1,5 +1,5 @@
 #pragma once
-#include "httplib.hpp"
+#include "cpp-httplib/httplib.hpp"
 #include "malapi/auth.hpp"
 #include "malapi/client.hpp"
 #include "malapi/types/client.hpp"

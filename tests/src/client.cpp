@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-#include "httplib.hpp"
+#include "cpp-httplib/httplib.hpp"
 #include "malapi/client.hpp"
 #include "malapi/jsonDefinitions.hpp"
 

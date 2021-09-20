@@ -16,6 +16,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+
 project(MalApi VERSION 0.1.0 DESCRIPTION "My Anime List Api Client" LANGUAGES CXX)
 
 find_package(Threads REQUIRED)
@@ -37,6 +38,7 @@ message("MALAPI_LIBRARY         : " ${MALAPI_LIBRARY})
 message("MALAPI_SRC_FILES       : " ${MALAPI_SRC_FILES})
 message("_LIBRARIES             : " ${_LIBRARIES})
 
+add_compile_definitions(CPPHTTPLIB_OPENSSL_SUPPORT JSON_HAS_CPP_17)
 add_library(${MALAPI_LIBRARY} ${MALAPI_SRC_FILES})
 
 target_compile_options(${MALAPI_LIBRARY} PUBLIC -pthread)
@@ -56,7 +58,7 @@ target_precompile_headers(
   <type_traits>
   <variant>
   <vector>
-  ${CMAKE_SOURCE_DIR}/include/httplib.hpp
+  ${CMAKE_SOURCE_DIR}/include/cpp-httplib/httplib.hpp
   ${CMAKE_SOURCE_DIR}/include/nlohmann/json.hpp
 )
 
