@@ -56,7 +56,7 @@ target_precompile_headers(
   <type_traits>
   <variant>
   <vector>
-  ${CMAKE_SOURCE_DIR}/include/httplib.hpp
+  ${CMAKE_SOURCE_DIR}/include/cpp-httplib/httplib.hpp
   ${CMAKE_SOURCE_DIR}/include/nlohmann/json.hpp
 )
 
