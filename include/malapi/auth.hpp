@@ -1,6 +1,6 @@
 #pragma once
 #include "../nlohmann/json.hpp"
-#include "cpp-httplib/httplib.hpp"
+#include "httplib.hpp"
 
 #include <string>
 

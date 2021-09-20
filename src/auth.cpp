@@ -1,6 +1,6 @@
 #include "malapi/auth.hpp"
 
-#include "cpp-httplib/httplib.hpp"
+#include "httplib.hpp"
 #include "malapi/listener.hpp"
 #include "nlohmann/json.hpp"
 #include "malapi/jsonDefinitions.hpp"
