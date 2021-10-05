@@ -133,7 +133,7 @@ void TestClient::testAll() const {
 #define DEF_STR_TEST(TEST, FUNCTION)                                          \
 	void TestClient::TEST() const {                                       \
 		auto res = std::get<0>(client.FUNCTION);                      \
-		std::cout << BANNER << "TEST" << BANNER << "\n"               \
+		std::cout << BANNER << #TEST << BANNER << "\n"               \
 			  << nlohmann::json::parse(res).dump(4) << std::endl; \
 	}
 

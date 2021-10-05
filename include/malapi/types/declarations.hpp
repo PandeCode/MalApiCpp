@@ -14,6 +14,12 @@ struct ForumBoards;
 struct ForumTopicDetail;
 struct ForumTopics;
 
+
+struct CreatedBy;
+struct Post ;
+struct ForumTopicDetailData;
+struct Paging;
+
 struct AlternativeTitlesObject;
 struct AnimeList;
 struct AnimeObject;
@@ -43,9 +49,9 @@ typedef std::string Date;
 typedef std::string SortingMethodEnum;
 // ListStatusEnum The list status of the user.( watching|completed|on_hold|dropped|plan_to_watch )
 
-typedef std::string            ListStatusEnum;
-typedef AnimeObject            AnimeDetails;
-typedef UserObject             UserDetails;
-typedef UserObject             UserData;
-typedef MangaRanking           MangaRankings;
-typedef AnimeRanking           AnimeRankings;
+typedef std::string     ListStatusEnum;
+typedef AnimeObjectNode AnimeDetails;
+typedef UserObject      UserDetails;
+typedef UserObject      UserData;
+typedef MangaRanking    MangaRankings;
+typedef AnimeRanking    AnimeRankings;

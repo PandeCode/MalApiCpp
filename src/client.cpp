@@ -13,39 +13,6 @@
 #include <variant>
 
 using namespace nlohmann;
-// clang-format off
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( AnimeObjectNode, id, main_picture, title, alternative_titles, average_episode_duration, broadcast, created_at, end_date, genres, mean, media_type, nsfw, num_episodes, num_favorites, num_list_users, num_scoring_users, popularity, rank, start_date, start_season, status, synopsis, source, studio, updated_at, my_list_status, background, related_anime, rating);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE( MyListStatusObject, comments, is_rewatching, num_episodes_watched, num_times_rewatched, priority, rewatch_value, score, status, tags, updated_at);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AlternativeTitlesObject, en, ja, synonyms);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeList, data);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeObject, node);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AnimeStudioObject, id, name);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BroadcastObject, day_of_the_week, start_time);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(PictureObject, large, medium);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SeasonObject, season, year);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UserObject, id, birthday, joined_at, location, name);
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GenreObject, id, name);
-
-
-#define NLOHMANN_DEFINE(Type)\
-    void to_json(nlohmann::json& , const Type& ) { } \
-    void from_json(const nlohmann::json& , Type& ) { }
-
-
-NLOHMANN_DEFINE(AnimeRanking );
-NLOHMANN_DEFINE(ForumBoards);
-NLOHMANN_DEFINE(ForumTopics);
-NLOHMANN_DEFINE(ForumTopicDetail);
-NLOHMANN_DEFINE(MangaDetails);
-NLOHMANN_DEFINE(MangaList);
-NLOHMANN_DEFINE(MangaRanking);
-NLOHMANN_DEFINE(SeasonalAnime);
-NLOHMANN_DEFINE(UserAnimeList);
-NLOHMANN_DEFINE(UserAnimeListStatus);
-NLOHMANN_DEFINE(UserMangaList);
-NLOHMANN_DEFINE(UserMangaListStatusUpdate);
-NLOHMANN_DEFINE(UserSuggestedAnime);
-// clang-format on
 
 static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
 static constexpr std::uint8_t OFFSET_DEFAULT = 0;
@@ -53,8 +20,19 @@ static const std::string      FAILED_REQUEST_TEXT =
     "{\"error\" : \"failed_request\", \"message\": \"failed request\"}";
 
 static void printResult(const httplib::Result& res) {
-	std::cout << "status_code : " << res->status << "\nbody        : " << res->body
-		  << "\nreason      : " << res->reason << "\n";
+	if(res) {
+		if(res->status == 200) {
+			std::cout << "Status         :" << res->status << std::endl;
+			std::cout << "Content_length :" << res->content_length_
+				  << std::endl;
+			std::cout << "Body           :" << res->body << std::endl;
+		}
+		std::cout << "Status         :" << res->status << std::endl;
+		std::cout << "Status: " << res->status << std::endl;
+	} else {
+		std::cout << "\033[91mError: " << res.error() << "\033[0m\n"
+			  << std::flush;
+	}
 }
 
 static const std::string& handleReturn(const httplib::Result& res) {
@@ -749,7 +727,7 @@ void Client::___defs() {
 	getAnimeList<AnimeList>("");
 
 	getAnimeDetails<std::string>(0);
-	getAnimeDetails<AnimeObject>(0);
+	getAnimeDetails<AnimeDetails>(0);
 
 	getAnimeRanking<std::string>();
 	getAnimeRanking<AnimeRanking>();

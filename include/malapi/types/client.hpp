@@ -1,5 +1,5 @@
 #pragma once
-#include "malapi/types/animeList.hpp"
+#include "malapi/types/declarations.hpp"
 #include "nlohmann/json.hpp"
 
 #include <cstdint>
@@ -89,37 +89,49 @@ struct UserObject {
 };
 
 struct AnimeObjectNode {
-	AlternativeTitlesObject alternative_titles;
-	uint16_t average_episode_duration; //Average duration(in seconds)of the episodes.
-	BroadcastObject          broadcast;
-	Date                     created_at;
-	CalendarDate             end_date; // The date at which the anime ended.
-	std::vector<GenreObject> genres;   // Genres of the anime.
-	std::uint16_t            id; //  The identifier of this media on MyAnimeList.
-	PictureObject            main_picture; // The poster artwork of the anime.
-	double                   mean; //  The mean score of this media on MyAnimeList.
-	std::string media_type; // Type of media(tv,ova,movie,special,ona,music,unknown).
-	std::string nsfw;       //  The NSFW state for this media (white, gray, black).
-	std::uint16_t num_episodes;  //  The number of episodes in this anime.
-	std::uint16_t num_favorites; //Number of users that added this to their favorites.
-	std::uint16_t num_list_users;    //Number of uses that added this to their lists.
-	std::uint16_t num_scoring_users; //  Number of users that voted for the scores.
-	std::uint16_t popularity;        //  The popularity rankings of this anime.
-	std::uint16_t rank;              //  The rankings of this anime.
-	CalendarDate  start_date;        // The date at which the anime started.
-	SeasonObject  start_season; // The season at which the anime started broadcasting.
-	std::string
-		    status; //  An enumeration representing the broadcasting status of the anime (finished_airing, currently_airing, not_yet_aired).
-	std::string synopsis; //  The synopsis of the anime.
-	std::string
-			  source; //  The original work that inspired this anime (original, manga, 4_koma_manga, web_manga, digital_manga, novel, light_novel, visual_novel, game, card_game, book, picture_book, radio, music, other).
-	AnimeStudioObject studio;
-	std::string       title; //  The canonical (?) title of the anime.
-	Date updated_at; //  The last time that the information is updated on MyAnimeList.
-	MyListStatusObject       my_list_status;
-	std::string              background;    //  Background story of the anime
-	std::vector<AnimeObject> related_anime; // A list of anime related to this anime
-	std::string
+	std::uint16_t id;           //  The identifier of this media on MyAnimeList.
+	std::string   title;        //  The canonical (?) title of the anime.
+	PictureObject main_picture; // The poster artwork of the anime.
+
+	std::optional<AlternativeTitlesObject> alternative_titles;
+	std::optional<uint16_t>
+	    average_episode_duration; //Average duration(in seconds)of the episodes.
+	std::optional<BroadcastObject> broadcast;
+	std::optional<Date>            created_at;
+	std::optional<CalendarDate>    end_date; // The date at which the anime ended.
+	std::optional<std::vector<GenreObject>> genres; // Genres of the anime.
+	std::optional<double> mean; //  The mean score of this media on MyAnimeList.
+	std::optional<std::string>
+	    media_type; // Type of media(tv,ova,movie,special,ona,music,unknown).
+	std::optional<std::string>
+	    nsfw; //  The NSFW state for this media (white, gray, black).
+	std::optional<std::uint16_t>
+	    num_episodes; //  The number of episodes in this anime.
+	std::optional<std::uint16_t>
+	    num_favorites; //Number of users that added this to their favorites.
+	std::optional<std::uint16_t>
+	    num_list_users; //Number of uses that added this to their lists.
+	std::optional<std::uint16_t>
+	    num_scoring_users; //  Number of users that voted for the scores.
+	std::optional<std::uint16_t>
+	    popularity;                    //  The popularity rankings of this anime.
+	std::optional<std::uint16_t> rank; //  The rankings of this anime.
+	std::optional<CalendarDate>  start_date; // The date at which the anime started.
+	std::optional<SeasonObject>
+	    start_season; // The season at which the anime started broadcasting.
+	std::optional<std::string>
+				   status; //  An enumeration representing the broadcasting status of the anime (finished_airing, currently_airing, not_yet_aired).
+	std::optional<std::string> synopsis; //  The synopsis of the anime.
+	std::optional<std::string>
+					 source; //  The original work that inspired this anime (original, manga, 4_koma_manga, web_manga, digital_manga, novel, light_novel, visual_novel, game, card_game, book, picture_book, radio, music, other).
+	std::optional<AnimeStudioObject> studio;
+	std::optional<Date>
+	    updated_at; //  The last time that the information is updated on MyAnimeList.
+	std::optional<MyListStatusObject> my_list_status;
+	std::optional<std::string>        background; //  Background story of the anime
+	std::optional<std::vector<AnimeObject>>
+	    related_anime; // A list of anime related to this anime
+	std::optional<std::string>
 	    rating; //  The rating of this anime (g All Ages, pg Children, pg_13 Teens 13 and Older, r 17+ (violence & profanity), r+ Profanity & Mild Nudity, rx Hentai).
 
 	std::string toString() const;
@@ -202,7 +214,46 @@ struct UserAnimeList {
 struct ForumBoards {
 	std::string toString() const;
 };
+
+struct CreatedBy {
+	std::string   forum_avator;
+	std::string   forum_title;
+	std::string   mods_title;
+	std::string   name;
+	std::uint16_t id;
+
+	std::string toString() const;
+};
+
+struct Post {
+	std::string body;
+	Date        created_at;
+	CreatedBy   created_by;
+	std::string   id;
+	std::uint16_t number;
+	std::string   signature;
+
+	std::string toString() const;
+};
+
+struct ForumTopicDetailData {
+	std::vector<Post> posts;
+	std::string       title;
+
+	std::string toString() const;
+};
+
+struct Paging {
+	std::optional<std::string> next;
+	std::optional<std::string> previous;
+
+	std::string toString() const;
+};
+
 struct ForumTopicDetail {
+	ForumTopicDetailData data;
+	Paging               paging;
+
 	std::string toString() const;
 };
 struct ForumTopics {
@@ -261,4 +312,3 @@ enum class MangaSortParam : std::uint8_t {
 struct UserMangaListStatusUpdate {
 	std::string toString() const;
 };
-
