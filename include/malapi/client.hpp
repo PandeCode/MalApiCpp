@@ -10,7 +10,9 @@
 class Client {
 	Auth                    m_auth;
 	mutable httplib::Client httpClient;
-	void                    ___defs(); // To get templates correct predefined
+
+	// To get templates correct predefined
+	void ___defs();
 
 	// Anime
 	std::string M__getAnimeList(
