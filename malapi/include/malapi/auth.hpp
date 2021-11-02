@@ -1,5 +1,5 @@
 #pragma once
-#include "../nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 #include "cpp-httplib/httplib.hpp"
 
 #include <string>
