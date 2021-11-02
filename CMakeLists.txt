@@ -61,3 +61,4 @@ target_precompile_headers(
 )
 
 add_subdirectory(tests)
+add_subdirectory(GetDubs)
