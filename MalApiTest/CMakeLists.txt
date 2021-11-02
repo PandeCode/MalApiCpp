@@ -23,3 +23,5 @@ add_executable(${TESTS_EXECUTABLE_NAME} ${TESTS_SRC_FILES})
 target_include_directories(${TESTS_EXECUTABLE_NAME} PUBLIC ${TESTS_INCLUDE_DIRS})
 target_link_libraries(${TESTS_EXECUTABLE_NAME} PUBLIC ${TESTS_LIBRARIES})
 target_compile_options(${TESTS_EXECUTABLE_NAME} PUBLIC -pthread)
+
+cotire(${TESTS_EXECUTABLE_NAME})

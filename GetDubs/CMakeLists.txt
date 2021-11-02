@@ -23,3 +23,5 @@ add_executable(${GET_DUBS_EXECUTABLE_NAME} ${GET_DUBS_SRC_FILES})
 target_include_directories(${GET_DUBS_EXECUTABLE_NAME} PUBLIC ${GET_DUBS_INCLUDE_DIRS})
 target_link_libraries(${GET_DUBS_EXECUTABLE_NAME} PUBLIC ${GET_DUBS_LIBRARIES})
 target_compile_options(${GET_DUBS_EXECUTABLE_NAME} PUBLIC -pthread)
+
+cotire(${GET_DUBS_EXECUTABLE_NAME})

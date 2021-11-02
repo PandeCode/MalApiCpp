@@ -16,9 +16,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
 
 project(MalApi VERSION 0.1.0 LANGUAGES CXX DESCRIPTION "My anime list c++ api library with tests and sample project.")
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+include(cotire)
 
 add_subdirectory(malapi)
 add_subdirectory(MalApiTest)

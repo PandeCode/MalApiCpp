@@ -42,3 +42,4 @@ target_precompile_headers(
   ${CMAKE_SOURCE_DIR}/include/cpp-httplib/httplib.hpp
   ${CMAKE_SOURCE_DIR}/include/nlohmann/json.hpp
 )
+cotire(${MALAPI_LIBRARY})
