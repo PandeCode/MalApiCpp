@@ -142,7 +142,7 @@ ParsedData utils::parseData(const std::string& raw) {
 		[](const std::string& str) { return str == ""; }),
 	    tl.end());
 
-	std::array dayIndices = {
+	std::array<std::vector<std::string>::iterator, 8> dayIndices = {
 	    std::find(tl.begin(), tl.end(), "Monday"),
 	    std::find(tl.begin(), tl.end(), "Tuesday"),
 	    std::find(tl.begin(), tl.end(), "Wednesday"),
@@ -159,7 +159,12 @@ ParsedData utils::parseData(const std::string& raw) {
 	std::array<std::vector<std::string>, 7> days = {};
 
 	for(std::uint8_t i = 0; i < 7 /*dayIndices.size() - 1 */; i++) {
-		std::copy(dayIndices[i], dayIndices[i + 1], std::back_inserter(days[i]));
+		auto next = i + 1;
+		while(dayIndices[next] == tl.end())
+			next++;
+
+		std::copy(dayIndices[i], dayIndices[next], std::back_inserter(days[i]));
+
 		days[i].erase(days[i].begin());
 	}
 
@@ -195,7 +200,7 @@ struct Anime {
 	std::string   name;
 	std::uint16_t episode;
 	std::uint16_t totalEpisodes;
-	bool          isDubbedFromHome;
+	bool          isDubbedFromHome = false;
 };
 
 Anime parseAnimeData(const std::string& animeData) {
@@ -224,32 +229,22 @@ Anime parseAnimeData(const std::string& animeData) {
 	string totalEpisodesStr = totalEpisodesSM.str();
 	string nameStr          = nameSM.str();
 
-	ret.name                = nameStr.substr(0, nameStr.size() - 2);
-	ret.episode             = stoi(episodeStr.substr(0, episodeStr.size() - 1));
-	ret.totalEpisodes = stoi(totalEpisodesStr.substr(1, totalEpisodesStr.size()));
+	ret.name                = std::regex_replace(
+            nameStr.substr(0, nameStr.size() - 2),
+            std::regex(R"(&.*;)"),
+            "");
+	ret.episode = stoi(episodeStr.substr(0, episodeStr.size() - 1));
+	ret.totalEpisodes =
+	    totalEpisodesStr.size() > 0
+		? stoi(totalEpisodesStr.substr(1, totalEpisodesStr.size()))
+		: 0;
 
 	return ret;
 }
 
 tabulate::Table utils::genTable(const ParsedData& parseData) {
-	auto ret = tabulate::Table();
-
-#ifdef DEBUG
-	std::cout << std::boolalpha;
-	for(const auto& data: parseData) {
-		Log::Debug(dayToString(data.first), " :");
-		for(auto d: data.second)
-			Log::Debug(
-			    "\tAnime: ",
-			    parseAnimeData(d).name,
-			    " ",
-			    parseAnimeData(d).isDubbedFromHome,
-			    " ",
-			    parseAnimeData(d).episode,
-			    "/",
-			    parseAnimeData(d).totalEpisodes);
-	}
-#endif
+	using namespace tabulate;
+	Table ret;
 
 	ret.add_row({"Day", "Name", "Home Dub", "Episode", "Total Episodes"});
 
@@ -261,8 +256,28 @@ tabulate::Table utils::genTable(const ParsedData& parseData) {
 			     parsedAnimeData.name,
 			     parsedAnimeData.isDubbedFromHome ? "true" : "false",
 			     std::to_string(parsedAnimeData.episode),
-			     std::to_string(parsedAnimeData.totalEpisodes)});
+			     parsedAnimeData.totalEpisodes
+				 ? std::to_string(parsedAnimeData.totalEpisodes)
+				 : "?"});
 		}
+	}
+
+	// center align 'Director' column
+	ret.column(2).format().font_align(FontAlign::center);
+
+	// right align 'Estimated Budget' column
+	ret.column(3).format().font_align(FontAlign::right);
+
+	// right align 'Release Date' column
+	ret.column(4).format().font_align(FontAlign::right);
+
+	// center-align and color header cells
+	for(size_t i = 0; i < 5; ++i) {
+		ret[0][i]
+		    .format()
+		    .font_color(Color::yellow)
+		    .font_align(FontAlign::center)
+		    .font_style({FontStyle::bold});
 	}
 
 	return ret;

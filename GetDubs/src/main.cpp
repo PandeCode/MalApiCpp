@@ -76,8 +76,10 @@ int main(int, char**) {
 	auto generatedTable = genTable(parsedData);
 
 	std::cout << generatedTable << std::endl;
+#ifdef DEBUG
 	std::cout << "parsedData    : " << toString(parsedData) << std::endl;
 	std::cout << "raw           : " << raw << std::endl;
+#endif
 
 	return 0;
 }
