@@ -7,8 +7,8 @@ static const std::string MAL_CLIENT_SECRET =
 static const std::string MAL_REDIRECT_URI = "http://127.0.0.1:8000/callback";
 
 struct ClientWrapper {
-	ClientWrapper()  = default;
-	Client client = Client(MAL_CLIENT_ID, MAL_CLIENT_SECRET, MAL_REDIRECT_URI);
+	ClientWrapper() = default;
+	Client client   = Client(MAL_CLIENT_ID, MAL_CLIENT_SECRET, MAL_REDIRECT_URI);
 
-	void getDubs() const;
+	std::string getDubs() const;
 };

@@ -1,9 +1,9 @@
 #include "malapi/auth.hpp"
 
 #include "cpp-httplib/httplib.hpp"
+#include "malapi/jsonDefinitions.hpp"
 #include "malapi/listener.hpp"
 #include "nlohmann/json.hpp"
-#include "malapi/jsonDefinitions.hpp"
 
 #include <cstdlib>
 #include <fstream>
@@ -152,18 +152,19 @@ bool Auth::expired() {
 
 	httplib::Client cli("https://api.myanimelist.net");
 
-	auto res = cli.Get(
-	    "/v2/users/@me",
-	    httplib::Headers {
-		{"Authorization", "Bearer " + authData.access_token},
-		{"Accept", "application/json"},
-	    });
-
-	if(res->status == 200)
-		return false;
-	else if(res->status == 0) {
-		std::cout << "Library is not working. Or offline.\n";
-		std::abort();
+	if(auto res = cli.Get(
+	       "/v2/users/@me",
+	       httplib::Headers {
+		   {"Authorization", "Bearer " + authData.access_token},
+		   {"Accept",        "application/json"               },
+        })) {
+		if(res->status == 200)
+			return false;
+		else if(res->status == 0) {
+			throw std::runtime_error("Library is not working. Or offline.\n");
+		}
+		return true;
 	}
-	return true;
+	else
+		throw std::runtime_error("Couldn't fetch");
 }

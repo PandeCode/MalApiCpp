@@ -39,7 +39,7 @@ target_precompile_headers(
   <type_traits>
   <variant>
   <vector>
-  ${CMAKE_SOURCE_DIR}/include/cpp-httplib/httplib.hpp
-  ${CMAKE_SOURCE_DIR}/include/nlohmann/json.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/cpp-httplib/httplib.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/nlohmann/json.hpp
 )
 cotire(${MALAPI_LIBRARY})
