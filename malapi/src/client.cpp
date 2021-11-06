@@ -17,7 +17,7 @@ using namespace nlohmann;
 static constexpr std::uint8_t LIMIT_DEFAULT  = 100;
 static constexpr std::uint8_t OFFSET_DEFAULT = 0;
 static const std::string      FAILED_REQUEST_TEXT =
-    "{\"error\" : \"failed_request\", \"message\": \"failed request\"}";
+    R"({"error" : "failed_request", "message": "failedrequest"})";
 
 static void printResult(const httplib::Result& res) {
 	if(res) {
@@ -54,38 +54,42 @@ static const std::string& handleReturn(const httplib::Result& res) {
 	}
 }
 
-Client::Client(Auth& auth) :
+Client::Client(Auth& auth, const std::string& cacheFile) :
     m_auth(auth), httpClient(httplib::Client("https://api.myanimelist.net")) {
+	auth.m_cacheFilePath = cacheFile;
 	if(!auth.isAuthenticated) m_auth.authenticate();
 
 	httpClient.set_default_headers({
 	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
+	    {"Accept",        "application/json"                      },
 	});
 }
 
 Client::Client(
-    std::string clientId,
-    std::string clientSecrect,
-    std::string redirectUri,
-    std::string state) :
-    m_auth(clientId, clientSecrect, redirectUri, state),
+    const std::string& clientId,
+    const std::string& clientSecrect,
+    const std::string& redirectUri,
+    const std::string& cacheFile,
+    const std::string& state) :
+    m_auth(clientId, clientSecrect, redirectUri, state, cacheFile),
     httpClient(httplib::Client("https://api.myanimelist.net")) {
 	m_auth.authenticate();
 
 	httpClient.set_default_headers({
 	    {"Authorization", "Bearer " + m_auth.authData.access_token},
-	    {"Accept", "application/json"},
+	    {"Accept",        "application/json"                      },
 	});
 }
 
 std::string Client::M__getAnimeList(
-    std::string                query,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::string&                query,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 
-	httplib::Params params {{"q", query}};
+	httplib::Params params {
+	    {"q", query}
+        };
 	if(fields.has_value()) params.emplace("fields", fields.value());
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
@@ -95,8 +99,8 @@ std::string Client::M__getAnimeList(
 };
 
 std::string Client::M__getAnimeDetails(
-    std::uint32_t              animeId,
-    std::optional<std::string> fields) const {
+    const std::uint32_t&              animeId,
+    const std::optional<std::string>& fields) const {
 	httplib::Params params;
 	if(fields.has_value()) params.emplace("fields", fields.value());
 
@@ -108,10 +112,10 @@ std::string Client::M__getAnimeDetails(
 }
 
 std::string Client::M__getAnimeRanking(
-    std::optional<std::string> fields,
-    AnimeRankingType           rankingType,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::optional<std::string>& fields,
+    const AnimeRankingType&           rankingType,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	httplib::Params params;
 
 	switch(rankingType) {
@@ -136,12 +140,12 @@ std::string Client::M__getAnimeRanking(
 }
 
 std::string Client::M__getSeasonalAnime(
-    std::uint32_t              year,
-    SeasonParam                season,
-    SeasonSortParam            sort,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::uint32_t&              year,
+    const SeasonParam&                season,
+    const SeasonSortParam&            sort,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	std::string seasonString;
 	switch(season) {
 		case SeasonParam::winter: seasonString = "/winter"; break;
@@ -177,9 +181,9 @@ std::string Client::M__getSeasonalAnime(
 // User Anime
 
 std::string Client::M__getUserSuggestedAnime(
-    std::uint8_t               limit,
-    std::uint8_t               offset,
-    std::optional<std::string> fields) const {
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset,
+    const std::optional<std::string>& fields) const {
 
 	httplib::Params params;
 
@@ -192,16 +196,16 @@ std::string Client::M__getUserSuggestedAnime(
 }
 
 std::string Client::M__updateUserAnimeListStatus(
-    std::uint32_t                   animeId,
-    std::optional<AnimeStatusParam> status,
-    std::optional<int>              score,
-    std::optional<int>              priority,
-    std::optional<int>              numWatchedEpisodes,
-    std::optional<bool>             isRewatching,
-    std::optional<int>              numTimesRewatched,
-    std::optional<int>              rewatchValue,
-    std::optional<std::string>      tags,
-    std::optional<std::string>      comments) const {
+    const std::uint32_t&                   animeId,
+    const std::optional<AnimeStatusParam>& status,
+    const std::optional<int>&              score,
+    const std::optional<int>&              priority,
+    const std::optional<int>&              numWatchedEpisodes,
+    const std::optional<bool>&             isRewatching,
+    const std::optional<int>&              numTimesRewatched,
+    const std::optional<int>&              rewatchValue,
+    const std::optional<std::string>&      tags,
+    const std::optional<std::string>&      comments) const {
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
@@ -240,11 +244,11 @@ std::string Client::M__updateUserAnimeListStatus(
 }
 
 std::string Client::M__getUserAnimeList(
-    std::string                       userName,
-    std::optional<AnimeStatusParam>   status,
-    std::optional<UserAnimeSortParam> sort,
-    std::uint8_t                      limit,
-    std::uint8_t                      offset) const {
+    const std::string&                       userName,
+    const std::optional<AnimeStatusParam>&   status,
+    const std::optional<UserAnimeSortParam>& sort,
+    const std::uint8_t&                      limit,
+    const std::uint8_t&                      offset) const {
 
 	httplib::Params params;
 
@@ -286,9 +290,9 @@ std::string Client::M__getForumBoards() const {
 }
 
 std::string Client::M__getForumTopicDetail(
-    std::uint32_t topicId,
-    std::uint8_t  limit,
-    std::uint8_t  offset) const {
+    const std::uint32_t& topicId,
+    const std::uint8_t&  limit,
+    const std::uint8_t&  offset) const {
 
 	httplib::Params params;
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
@@ -302,14 +306,14 @@ std::string Client::M__getForumTopicDetail(
 }
 
 std::string Client::M__getForumTopics(
-    std::optional<std::uint32_t>  boardId,
-    std::optional<std::uint32_t>  subboardId,
-    std::optional<ForumSortParam> sort,
-    std::optional<std::string>    query,
-    std::optional<std::string>    topicUserName,
-    std::optional<std::string>    userName,
-    std::uint8_t                  limit,
-    std::uint8_t                  offset) const {
+    const std::optional<std::uint32_t>&  boardId,
+    const std::optional<std::uint32_t>&  subboardId,
+    const std::optional<ForumSortParam>& sort,
+    const std::optional<std::string>&    query,
+    const std::optional<std::string>&    topicUserName,
+    const std::optional<std::string>&    userName,
+    const std::uint8_t&                  limit,
+    const std::uint8_t&                  offset) const {
 
 	httplib::Params params;
 
@@ -337,11 +341,13 @@ std::string Client::M__getForumTopics(
 
 //# Manga
 std::string Client::M__getMangaList(
-    std::string                query,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
-	auto params = httplib::Params({{"q", query}});
+    const std::string&                query,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
+	auto params = httplib::Params({
+	    {"q", query}
+        });
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 	if(fields.has_value()) params.emplace("fields", fields.value());
@@ -351,8 +357,8 @@ std::string Client::M__getMangaList(
 }
 
 std::string Client::M__getMangaDetails(
-    std::uint32_t              mangaId,
-    std::optional<std::string> fields) const {
+    const std::uint32_t&              mangaId,
+    const std::optional<std::string>& fields) const {
 	httplib::Params params;
 	if(fields.has_value()) params.emplace("fields", fields.value());
 
@@ -364,10 +370,10 @@ std::string Client::M__getMangaDetails(
 }
 
 std::string Client::M__getMangaRanking(
-    MangaRankingTypeParam      rankingType, //MangaRankingTypeParam
-    std::uint8_t               limit,
-    std::uint8_t               offset,
-    std::optional<std::string> fields) const {
+    const MangaRankingTypeParam&      rankingType, //MangaRankingTypeParam
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset,
+    const std::optional<std::string>& fields) const {
 
 	httplib::Params params;
 
@@ -400,17 +406,17 @@ std::string Client::M__getMangaRanking(
 //# User Manga
 
 std::string Client::M__updateUserMangaListStatus(
-    std::uint32_t                   mangaId,
-    std::optional<MangaStatusParam> status,
-    std::optional<bool>             isReReading,
-    std::optional<std::uint8_t>     score,
-    std::optional<std::uint8_t>     numVolsRead,
-    std::optional<std::uint8_t>     numChaptersRead,
-    std::optional<std::uint8_t>     priority,
-    std::optional<std::uint8_t>     numTimesRead,
-    std::optional<std::uint8_t>     reReadValue,
-    std::optional<std::string>      tags,
-    std::optional<std::string>      comments) const {
+    const std::uint32_t&                   mangaId,
+    const std::optional<MangaStatusParam>& status,
+    const std::optional<bool>&             isReReading,
+    const std::optional<std::uint8_t>&     score,
+    const std::optional<std::uint8_t>&     numVolsRead,
+    const std::optional<std::uint8_t>&     numChaptersRead,
+    const std::optional<std::uint8_t>&     priority,
+    const std::optional<std::uint8_t>&     numTimesRead,
+    const std::optional<std::uint8_t>&     reReadValue,
+    const std::optional<std::string>&      tags,
+    const std::optional<std::string>&      comments) const {
 	httplib::Params params;
 
 	if(status.has_value()) switch(status.value()) {
@@ -451,11 +457,11 @@ std::string Client::M__updateUserMangaListStatus(
 }
 
 std::string Client::M__getUserMangaList(
-    std::string                     userName,
-    std::optional<MangaStatusParam> status,
-    std::optional<MangaSortParam>   sort,
-    std::uint8_t                    limit,
-    std::uint8_t                    offset) const {
+    const std::string&                     userName,
+    const std::optional<MangaStatusParam>& status,
+    const std::optional<MangaSortParam>&   sort,
+    const std::uint8_t&                    limit,
+    const std::uint8_t&                    offset) const {
 
 	httplib::Params params;
 
@@ -490,8 +496,8 @@ std::string Client::M__getUserMangaList(
 }
 
 std::string Client::M__getUserData(
-    std::string                userName,
-    std::optional<std::string> fields) const {
+    const std::string&                userName,
+    const std::optional<std::string>& fields) const {
 	auto params = httplib::Params {};
 	if(fields.has_value()) params.emplace("fields", fields.value());
 
@@ -510,37 +516,37 @@ std::string Client::M__getUserData(
 
 template <class ReturnType>
 std::variant<std::string, AnimeList> Client::getAnimeList(
-    std::string                query,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::string&                query,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	DEF_OPT(AnimeList, M__getAnimeList(query, fields, limit, offset));
 }
 
 template <class ReturnType>
 std::variant<std::string, AnimeDetails> Client::getAnimeDetails(
-    std::uint32_t              animeId,
-    std::optional<std::string> fields) const {
+    const std::uint32_t&              animeId,
+    const std::optional<std::string>& fields) const {
 	DEF_OPT(AnimeDetails, M__getAnimeDetails(animeId, fields));
 }
 
 template <class ReturnType>
 std::variant<std::string, AnimeRanking> Client::getAnimeRanking(
-    std::optional<std::string> fields,
-    AnimeRankingType           rankingType,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::optional<std::string>& fields,
+    const AnimeRankingType&           rankingType,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	DEF_OPT(AnimeRanking, M__getAnimeRanking(fields, rankingType, limit, offset));
 }
 
 template <class ReturnType>
 std::variant<std::string, SeasonalAnime> Client::getSeasonalAnime(
-    std::uint32_t              year,
-    SeasonParam                season,
-    SeasonSortParam            sort,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::uint32_t&              year,
+    const SeasonParam&                season,
+    const SeasonSortParam&            sort,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	DEF_OPT(
 	    SeasonalAnime,
 	    M__getSeasonalAnime(year, season, sort, fields, limit, offset));
@@ -550,24 +556,24 @@ std::variant<std::string, SeasonalAnime> Client::getSeasonalAnime(
 
 template <class ReturnType>
 std::variant<std::string, UserSuggestedAnime> Client::getUserSuggestedAnime(
-    std::uint8_t               limit,
-    std::uint8_t               offset,
-    std::optional<std::string> fields) const {
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset,
+    const std::optional<std::string>& fields) const {
 	DEF_OPT(UserSuggestedAnime, M__getUserSuggestedAnime(limit, offset, fields));
 }
 
 template <class ReturnType>
 std::variant<std::string, UserAnimeListStatus> Client::updateUserAnimeListStatus(
-    std::uint32_t                   animeId,
-    std::optional<AnimeStatusParam> status,
-    std::optional<int>              score,
-    std::optional<int>              priority,
-    std::optional<int>              numWatchedEpisodes,
-    std::optional<bool>             isRewatching,
-    std::optional<int>              numTimesRewatched,
-    std::optional<int>              rewatchValue,
-    std::optional<std::string>      tags,
-    std::optional<std::string>      comments) const {
+    const std::uint32_t&                   animeId,
+    const std::optional<AnimeStatusParam>& status,
+    const std::optional<int>&              score,
+    const std::optional<int>&              priority,
+    const std::optional<int>&              numWatchedEpisodes,
+    const std::optional<bool>&             isRewatching,
+    const std::optional<int>&              numTimesRewatched,
+    const std::optional<int>&              rewatchValue,
+    const std::optional<std::string>&      tags,
+    const std::optional<std::string>&      comments) const {
 	return M__updateUserAnimeListStatus(
 	    animeId,
 	    status,
@@ -583,11 +589,11 @@ std::variant<std::string, UserAnimeListStatus> Client::updateUserAnimeListStatus
 
 template <class ReturnType>
 std::variant<std::string, UserAnimeList> Client::getUserAnimeList(
-    std::string                       userName,
-    std::optional<AnimeStatusParam>   status,
-    std::optional<UserAnimeSortParam> sort,
-    std::uint8_t                      limit,
-    std::uint8_t                      offset) const {
+    const std::string&                       userName,
+    const std::optional<AnimeStatusParam>&   status,
+    const std::optional<UserAnimeSortParam>& sort,
+    const std::uint8_t&                      limit,
+    const std::uint8_t&                      offset) const {
 	DEF_OPT(
 	    UserAnimeList,
 	    M__getUserAnimeList(userName, status, sort, limit, offset));
@@ -602,22 +608,22 @@ std::variant<std::string, ForumBoards> Client::getForumBoards() const {
 
 template <class ReturnType>
 std::variant<std::string, ForumTopicDetail> Client::getForumTopicDetail(
-    std::uint32_t topicId,
-    std::uint8_t  limit,
-    std::uint8_t  offset) const {
+    const std::uint32_t& topicId,
+    const std::uint8_t&  limit,
+    const std::uint8_t&  offset) const {
 	DEF_OPT(ForumTopicDetail, M__getForumTopicDetail(topicId, limit, offset));
 }
 
 template <class ReturnType>
 std::variant<std::string, ForumTopics> Client::getForumTopics(
-    std::optional<std::uint32_t>  boardId,
-    std::optional<std::uint32_t>  subboardId,
-    std::optional<ForumSortParam> sort,
-    std::optional<std::string>    query,
-    std::optional<std::string>    topicUserName,
-    std::optional<std::string>    userName,
-    std::uint8_t                  limit,
-    std::uint8_t                  offset) const {
+    const std::optional<std::uint32_t>&  boardId,
+    const std::optional<std::uint32_t>&  subboardId,
+    const std::optional<ForumSortParam>& sort,
+    const std::optional<std::string>&    query,
+    const std::optional<std::string>&    topicUserName,
+    const std::optional<std::string>&    userName,
+    const std::uint8_t&                  limit,
+    const std::uint8_t&                  offset) const {
 	DEF_OPT(
 	    ForumTopics,
 	    M__getForumTopics(
@@ -634,26 +640,26 @@ std::variant<std::string, ForumTopics> Client::getForumTopics(
 //# Manga
 template <class ReturnType>
 std::variant<std::string, MangaList> Client::getMangaList(
-    std::string                query,
-    std::optional<std::string> fields,
-    std::uint8_t               limit,
-    std::uint8_t               offset) const {
+    const std::string&                query,
+    const std::optional<std::string>& fields,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset) const {
 	DEF_OPT(MangaList, M__getMangaList(query, fields, limit, offset));
 }
 
 template <class ReturnType>
 std::variant<std::string, MangaDetails> Client::getMangaDetails(
-    std::uint32_t              mangaId,
-    std::optional<std::string> fields) const {
+    const std::uint32_t&              mangaId,
+    const std::optional<std::string>& fields) const {
 	DEF_OPT(MangaDetails, M__getMangaDetails(mangaId, fields));
 }
 
 template <class ReturnType>
 std::variant<std::string, MangaRanking> Client::getMangaRanking(
-    MangaRankingTypeParam      rankingType,
-    std::uint8_t               limit,
-    std::uint8_t               offset,
-    std::optional<std::string> fields) const {
+    const MangaRankingTypeParam&      rankingType,
+    const std::uint8_t&               limit,
+    const std::uint8_t&               offset,
+    const std::optional<std::string>& fields) const {
 	DEF_OPT(MangaRanking, M__getMangaRanking(rankingType, limit, offset, fields));
 }
 
@@ -661,17 +667,17 @@ std::variant<std::string, MangaRanking> Client::getMangaRanking(
 
 template <class ReturnType>
 std::variant<std::string, UserMangaListStatus> Client::updateUserMangaListStatus(
-    std::uint32_t                   mangaId,
-    std::optional<MangaStatusParam> status,
-    std::optional<bool>             isReReading,
-    std::optional<std::uint8_t>     score,
-    std::optional<std::uint8_t>     numVolsRead,
-    std::optional<std::uint8_t>     numChaptersRead,
-    std::optional<std::uint8_t>     priority,
-    std::optional<std::uint8_t>     numTimesRead,
-    std::optional<std::uint8_t>     reReadValue,
-    std::optional<std::string>      tags,
-    std::optional<std::string>      comments) const {
+    const std::uint32_t&                   mangaId,
+    const std::optional<MangaStatusParam>& status,
+    const std::optional<bool>&             isReReading,
+    const std::optional<std::uint8_t>&     score,
+    const std::optional<std::uint8_t>&     numVolsRead,
+    const std::optional<std::uint8_t>&     numChaptersRead,
+    const std::optional<std::uint8_t>&     priority,
+    const std::optional<std::uint8_t>&     numTimesRead,
+    const std::optional<std::uint8_t>&     reReadValue,
+    const std::optional<std::string>&      tags,
+    const std::optional<std::string>&      comments) const {
 	return M__updateUserMangaListStatus(
 	    mangaId,
 	    status,
@@ -688,11 +694,11 @@ std::variant<std::string, UserMangaListStatus> Client::updateUserMangaListStatus
 
 template <class ReturnType>
 std::variant<std::string, UserMangaList> Client::getUserMangaList(
-    std::string                     userName,
-    std::optional<MangaStatusParam> status,
-    std::optional<MangaSortParam>   sort,
-    std::uint8_t                    limit,
-    std::uint8_t                    offset) const {
+    const std::string&                     userName,
+    const std::optional<MangaStatusParam>& status,
+    const std::optional<MangaSortParam>&   sort,
+    const std::uint8_t&                    limit,
+    const std::uint8_t&                    offset) const {
 	DEF_OPT(
 	    UserMangaList,
 	    M__getUserMangaList(userName, status, sort, limit, offset));
@@ -700,12 +706,13 @@ std::variant<std::string, UserMangaList> Client::getUserMangaList(
 
 //# User
 template <class ReturnType>
-std::variant<std::string, UserObject>
-    Client::getUserData(std::string userName, std::optional<std::string> fields) const {
+std::variant<std::string, UserObject> Client::getUserData(
+    const std::string&                userName,
+    const std::optional<std::string>& fields) const {
 	DEF_OPT(UserData, M__getUserData(userName, fields));
 }
 
-bool Client::deleteUserAnime(std::uint32_t animeId) const {
+bool Client::deleteUserAnime(const std::uint32_t& animeId) const {
 	if(auto res = httpClient.Delete(
 	       (("/v2/anime/" + std::to_string(animeId) + "/my_list_status").c_str()))) {
 		return res->status == 200;
@@ -713,7 +720,7 @@ bool Client::deleteUserAnime(std::uint32_t animeId) const {
 		return false;
 }
 
-bool Client::deleteUserMangaListItem(std::uint32_t mangaId) const {
+bool Client::deleteUserMangaListItem(const std::uint32_t& mangaId) const {
 	if(auto res = httpClient.Delete(
 	       ("/v2/manga/" + std::to_string(mangaId) + "/my_list_status").c_str())) {
 		return res->status == 200;

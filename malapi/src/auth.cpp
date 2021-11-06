@@ -55,11 +55,11 @@ void overwriteFile(const std::string& filePath, const std::string& text) {
 }
 
 Auth::Auth(
-    std::string clientId,
-    std::string clientSecrect,
-    std::string redirectUri,
-    std::string state,
-    std::string cacheFilePath) :
+    const std::string& clientId,
+    const std::string& clientSecrect,
+    const std::string& redirectUri,
+    const std::string& state,
+    const std::string& cacheFilePath) :
     m_clientId(clientId),
     m_clientSecrect(clientSecrect), m_redirectUri(redirectUri),
     m_codeChallenge(getNewCodeVerifier()), m_state(state),
@@ -90,7 +90,7 @@ std::string Auth::listenForCode() {
 	return Listener::listen();
 }
 
-httplib::Result Auth::getUserToken(std::string code) const {
+httplib::Result Auth::getUserToken(const std::string& code) const {
 	httplib::Client cli("https://myanimelist.net");
 
 	auto data = std::stringstream();
@@ -164,7 +164,6 @@ bool Auth::expired() {
 			throw std::runtime_error("Library is not working. Or offline.\n");
 		}
 		return true;
-	}
-	else
+	} else
 		throw std::runtime_error("Couldn't fetch");
 }

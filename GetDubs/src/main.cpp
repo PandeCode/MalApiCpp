@@ -3,7 +3,10 @@
 #include "utils.hpp"
 
 #include <iostream>
+#include <pwd.h>
 #include <sstream>
+#include <sys/types.h>
+#include <unistd.h>
 
 template <typename T1, typename T2>
 static std::ostream& operator<<(std::ostream& stream, const Day day) {
@@ -57,23 +60,27 @@ std::string toString(const ParsedData& um) {
 	return stream.str();
 }
 
-using namespace utils;
 using namespace tabulate;
 
 int main(int, char**) {
 	std::string raw;
+	std::string cacheFilePath =
+	    std::string(getpwuid(getuid())->pw_dir) + "/.cache/.getDubs";
 
 	try {
 		ClientWrapper testClient;
 		raw = testClient.getDubs();
+		utils::overwriteFile(cacheFilePath, raw);
 	} catch(std::exception e) {
-		std::cout << "You seem to be offline. using getDubs.txt. \n"
-			  << e.what() << std::endl;
-		raw = readFile("getDubs.txt");
+		std::cout << "You seem to be offline. using '" << cacheFilePath << "'."
+			  << std::endl;
+		raw = utils::readFile(cacheFilePath);
+		if(raw == "")
+			throw std::runtime_error("'" + cacheFilePath + "' was not found");
 	}
 
-	auto parsedData     = parseData(raw);
-	auto generatedTable = genTable(parsedData);
+	auto parsedData     = utils::parseData(raw);
+	auto generatedTable = utils::genTable(parsedData);
 
 	std::cout << generatedTable << std::endl;
 #ifdef DEBUG

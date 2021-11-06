@@ -1,6 +1,6 @@
 #pragma once
-#include "nlohmann/json.hpp"
 #include "cpp-httplib/httplib.hpp"
+#include "nlohmann/json.hpp"
 
 #include <string>
 
@@ -38,17 +38,17 @@ class Auth {
 
       public:
 	Auth(
-	    std::string clientId,
-	    std::string clientSecrect,
-	    std::string redirectUri,
-	    std::string state         = "Authenticaion",
-	    std::string cacheFilePath = "./cache.json");
+	    const std::string& clientId,
+	    const std::string& clientSecrect,
+	    const std::string& redirectUri,
+	    const std::string& state         = "Authenticaion",
+	    const std::string& cacheFilePath = "./cache.json");
 	~Auth()                             = default;
 
 	bool                isAuthenticated = false;
 	AuthTypes::AuthData authData;
 
-	httplib::Result getUserToken(std::string code) const;
+	httplib::Result getUserToken(const std::string& code) const;
 
 	static std::string listenForCode();
 	static std::string getNewCodeVerifier();

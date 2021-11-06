@@ -5,7 +5,10 @@
 #include "malapi/types/client.hpp"
 
 #include <optional>
+#include <pwd.h>
 #include <string>
+#include <sys/types.h>
+#include <unistd.h>
 
 class Client {
 	Auth                    m_auth;
@@ -16,175 +19,175 @@ class Client {
 
 	// Anime
 	std::string M__getAnimeList(
-	    std::string                query,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::string&                query,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	std::string M__getAnimeDetails(
-	    std::uint32_t              animeId,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint32_t&              animeId,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	std::string M__getAnimeRanking(
-	    std::optional<std::string> fields      = std::nullopt,
-	    AnimeRankingType           rankingType = AnimeRankingType::all,
-	    std::uint8_t               limit       = 100,
-	    std::uint8_t               offset      = 0) const;
+	    const std::optional<std::string>& fields      = std::nullopt,
+	    const AnimeRankingType&           rankingType = AnimeRankingType::all,
+	    const std::uint8_t&               limit       = 100,
+	    const std::uint8_t&               offset      = 0) const;
 
 	std::string M__getSeasonalAnime(
-	    std::uint32_t              year,
-	    SeasonParam                season,
-	    SeasonSortParam            sort   = SeasonSortParam::anime_score,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::uint32_t&              year,
+	    const SeasonParam&                season,
+	    const SeasonSortParam&            sort   = SeasonSortParam::anime_score,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	// User Anime
 
 	std::string M__getUserSuggestedAnime(
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	std::string M__updateUserAnimeListStatus(
-	    std::uint32_t                   animeId,
-	    std::optional<AnimeStatusParam> status             = std::nullopt,
-	    std::optional<int>              score              = std::nullopt,
-	    std::optional<int>              priority           = std::nullopt,
-	    std::optional<int>              numWatchedEpisodes = std::nullopt,
-	    std::optional<bool>             isRewatching       = std::nullopt,
-	    std::optional<int>              numTimesRewatched  = std::nullopt,
-	    std::optional<int>              rewatchValue       = std::nullopt,
-	    std::optional<std::string>      tags               = std::nullopt,
-	    std::optional<std::string>      comments           = std::nullopt) const;
+	    const std::uint32_t&                   animeId,
+	    const std::optional<AnimeStatusParam>& status             = std::nullopt,
+	    const std::optional<int>&              score              = std::nullopt,
+	    const std::optional<int>&              priority           = std::nullopt,
+	    const std::optional<int>&              numWatchedEpisodes = std::nullopt,
+	    const std::optional<bool>&             isRewatching       = std::nullopt,
+	    const std::optional<int>&              numTimesRewatched  = std::nullopt,
+	    const std::optional<int>&              rewatchValue       = std::nullopt,
+	    const std::optional<std::string>&      tags               = std::nullopt,
+	    const std::optional<std::string>&      comments = std::nullopt) const;
 
 	std::string M__getUserAnimeList(
-	    std::string                       userName = "@me",
-	    std::optional<AnimeStatusParam>   status   = std::nullopt,
-	    std::optional<UserAnimeSortParam> sort     = std::nullopt,
-	    std::uint8_t                      limit    = 100,
-	    std::uint8_t                      offset   = 0) const;
+	    const std::string&                       userName = "@me",
+	    const std::optional<AnimeStatusParam>&   status   = std::nullopt,
+	    const std::optional<UserAnimeSortParam>& sort     = std::nullopt,
+	    const std::uint8_t&                      limit    = 100,
+	    const std::uint8_t&                      offset   = 0) const;
 
 	//# Forums
 
 	std::string M__getForumBoards() const;
 	std::string M__getForumTopicDetail(
-	    std::uint32_t topicId,
-	    std::uint8_t  limit  = 100,
-	    std::uint8_t  offset = 0) const;
+	    const std::uint32_t& topicId,
+	    const std::uint8_t&  limit  = 100,
+	    const std::uint8_t&  offset = 0) const;
 
 	std::string M__getForumTopics(
-	    std::optional<std::uint32_t>  boardId       = std::nullopt,
-	    std::optional<std::uint32_t>  subboardId    = std::nullopt,
-	    std::optional<ForumSortParam> sort          = std::nullopt,
-	    std::optional<std::string>    query         = std::nullopt,
-	    std::optional<std::string>    topicUserName = std::nullopt,
-	    std::optional<std::string>    userName      = std::nullopt,
-	    std::uint8_t                  limit         = 100,
-	    std::uint8_t                  offset        = 0) const;
+	    const std::optional<std::uint32_t>&  boardId       = std::nullopt,
+	    const std::optional<std::uint32_t>&  subboardId    = std::nullopt,
+	    const std::optional<ForumSortParam>& sort          = std::nullopt,
+	    const std::optional<std::string>&    query         = std::nullopt,
+	    const std::optional<std::string>&    topicUserName = std::nullopt,
+	    const std::optional<std::string>&    userName      = std::nullopt,
+	    const std::uint8_t&                  limit         = 100,
+	    const std::uint8_t&                  offset        = 0) const;
 
 	//# Manga
 	std::string M__getMangaList(
-	    std::string                query,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::string&                query,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	std::string M__getMangaDetails(
-	    std::uint32_t              mangaId,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint32_t&              mangaId,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	std::string M__getMangaRanking(
-	    MangaRankingTypeParam      rankingType = MangaRankingTypeParam::all,
-	    std::uint8_t               limit       = 100,
-	    std::uint8_t               offset      = 0,
-	    std::optional<std::string> fields      = std::nullopt) const;
+	    const MangaRankingTypeParam&      rankingType = MangaRankingTypeParam::all,
+	    const std::uint8_t&               limit       = 100,
+	    const std::uint8_t&               offset      = 0,
+	    const std::optional<std::string>& fields      = std::nullopt) const;
 
 	//# User Manga
 
 	std::string M__updateUserMangaListStatus(
-	    std::uint32_t                   mangaId,
-	    std::optional<MangaStatusParam> status          = std::nullopt,
-	    std::optional<bool>             isReReading     = std::nullopt,
-	    std::optional<std::uint8_t>     score           = std::nullopt,
-	    std::optional<std::uint8_t>     numVolsRead     = std::nullopt,
-	    std::optional<std::uint8_t>     numChaptersRead = std::nullopt,
-	    std::optional<std::uint8_t>     priority        = std::nullopt,
-	    std::optional<std::uint8_t>     numTimesRead    = std::nullopt,
-	    std::optional<std::uint8_t>     reReadValue     = std::nullopt,
-	    std::optional<std::string>      tags            = std::nullopt,
-	    std::optional<std::string>      comments        = std::nullopt) const;
+	    const std::uint32_t&                   mangaId,
+	    const std::optional<MangaStatusParam>& status          = std::nullopt,
+	    const std::optional<bool>&             isReReading     = std::nullopt,
+	    const std::optional<std::uint8_t>&     score           = std::nullopt,
+	    const std::optional<std::uint8_t>&     numVolsRead     = std::nullopt,
+	    const std::optional<std::uint8_t>&     numChaptersRead = std::nullopt,
+	    const std::optional<std::uint8_t>&     priority        = std::nullopt,
+	    const std::optional<std::uint8_t>&     numTimesRead    = std::nullopt,
+	    const std::optional<std::uint8_t>&     reReadValue     = std::nullopt,
+	    const std::optional<std::string>&      tags            = std::nullopt,
+	    const std::optional<std::string>&      comments        = std::nullopt) const;
 
 	std::string M__getUserMangaList(
-	    std::string                     userName = "@me",
-	    std::optional<MangaStatusParam> status   = std::nullopt,
-	    std::optional<MangaSortParam>   sort     = std::nullopt,
-	    std::uint8_t                    limit    = 100,
-	    std::uint8_t                    offset   = 0) const;
+	    const std::string&                     userName = "@me",
+	    const std::optional<MangaStatusParam>& status   = std::nullopt,
+	    const std::optional<MangaSortParam>&   sort     = std::nullopt,
+	    const std::uint8_t&                    limit    = 100,
+	    const std::uint8_t&                    offset   = 0) const;
 
 	//# User
 	std::string M__getUserData(
-	    std::string                userName = "@me",
-	    std::optional<std::string> fields   = std::nullopt) const;
+	    const std::string&                userName = "@me",
+	    const std::optional<std::string>& fields   = std::nullopt) const;
       public:
 	//
 	// Anime
 	template <class ReturnType = std::string>
 	std::variant<std::string, AnimeList> getAnimeList(
-	    std::string                query,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::string&                query,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, AnimeDetails> getAnimeDetails(
-	    std::uint32_t              animeId,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint32_t&              animeId,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, AnimeRanking> getAnimeRanking(
-	    std::optional<std::string> fields      = std::nullopt,
-	    AnimeRankingType           rankingType = AnimeRankingType::all,
-	    std::uint8_t               limit       = 100,
-	    std::uint8_t               offset      = 0) const;
+	    const std::optional<std::string>& fields      = std::nullopt,
+	    const AnimeRankingType&           rankingType = AnimeRankingType::all,
+	    const std::uint8_t&               limit       = 100,
+	    const std::uint8_t&               offset      = 0) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, SeasonalAnime> getSeasonalAnime(
-	    std::uint32_t              year,
-	    SeasonParam                season,
-	    SeasonSortParam            sort   = SeasonSortParam::anime_score,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::uint32_t&              year,
+	    const SeasonParam&                season,
+	    const SeasonSortParam&            sort   = SeasonSortParam::anime_score,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	// User Anime
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserSuggestedAnime> getUserSuggestedAnime(
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserAnimeListStatus> updateUserAnimeListStatus(
-	    std::uint32_t                   animeId,
-	    std::optional<AnimeStatusParam> status             = std::nullopt,
-	    std::optional<int>              score              = std::nullopt,
-	    std::optional<int>              priority           = std::nullopt,
-	    std::optional<int>              numWatchedEpisodes = std::nullopt,
-	    std::optional<bool>             isRewatching       = std::nullopt,
-	    std::optional<int>              numTimesRewatched  = std::nullopt,
-	    std::optional<int>              rewatchValue       = std::nullopt,
-	    std::optional<std::string>      tags               = std::nullopt,
-	    std::optional<std::string>      comments           = std::nullopt) const;
+	    const std::uint32_t&                   animeId,
+	    const std::optional<AnimeStatusParam>& status             = std::nullopt,
+	    const std::optional<int>&              score              = std::nullopt,
+	    const std::optional<int>&              priority           = std::nullopt,
+	    const std::optional<int>&              numWatchedEpisodes = std::nullopt,
+	    const std::optional<bool>&             isRewatching       = std::nullopt,
+	    const std::optional<int>&              numTimesRewatched  = std::nullopt,
+	    const std::optional<int>&              rewatchValue       = std::nullopt,
+	    const std::optional<std::string>&      tags               = std::nullopt,
+	    const std::optional<std::string>&      comments = std::nullopt) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserAnimeList> getUserAnimeList(
-	    std::string                       userName = "@me",
-	    std::optional<AnimeStatusParam>   status   = std::nullopt,
-	    std::optional<UserAnimeSortParam> sort     = std::nullopt,
-	    std::uint8_t                      limit    = 100,
-	    std::uint8_t                      offset   = 0) const;
+	    const std::string&                       userName = "@me",
+	    const std::optional<AnimeStatusParam>&   status   = std::nullopt,
+	    const std::optional<UserAnimeSortParam>& sort     = std::nullopt,
+	    const std::uint8_t&                      limit    = 100,
+	    const std::uint8_t&                      offset   = 0) const;
 
 	//# Forums
 
@@ -193,79 +196,83 @@ class Client {
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, ForumTopicDetail> getForumTopicDetail(
-	    std::uint32_t topicId,
-	    std::uint8_t  limit  = 100,
-	    std::uint8_t  offset = 0) const;
+	    const std::uint32_t& topicId,
+	    const std::uint8_t&  limit  = 100,
+	    const std::uint8_t&  offset = 0) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, ForumTopics> getForumTopics(
-	    std::optional<std::uint32_t>  boardId       = std::nullopt,
-	    std::optional<std::uint32_t>  subboardId    = std::nullopt,
-	    std::optional<ForumSortParam> sort          = std::nullopt,
-	    std::optional<std::string>    query         = std::nullopt,
-	    std::optional<std::string>    topicUserName = std::nullopt,
-	    std::optional<std::string>    userName      = std::nullopt,
-	    std::uint8_t                  limit         = 100,
-	    std::uint8_t                  offset        = 0) const;
+	    const std::optional<std::uint32_t>&  boardId       = std::nullopt,
+	    const std::optional<std::uint32_t>&  subboardId    = std::nullopt,
+	    const std::optional<ForumSortParam>& sort          = std::nullopt,
+	    const std::optional<std::string>&    query         = std::nullopt,
+	    const std::optional<std::string>&    topicUserName = std::nullopt,
+	    const std::optional<std::string>&    userName      = std::nullopt,
+	    const std::uint8_t&                  limit         = 100,
+	    const std::uint8_t&                  offset        = 0) const;
 
 	//# Manga
 	template <class ReturnType = std::string>
 	std::variant<std::string, MangaList> getMangaList(
-	    std::string                query,
-	    std::optional<std::string> fields = std::nullopt,
-	    std::uint8_t               limit  = 100,
-	    std::uint8_t               offset = 0) const;
+	    const std::string&                query,
+	    const std::optional<std::string>& fields = std::nullopt,
+	    const std::uint8_t&               limit  = 100,
+	    const std::uint8_t&               offset = 0) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, MangaDetails> getMangaDetails(
-	    std::uint32_t              mangaId,
-	    std::optional<std::string> fields = std::nullopt) const;
+	    const std::uint32_t&              mangaId,
+	    const std::optional<std::string>& fields = std::nullopt) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, MangaRanking> getMangaRanking(
-	    MangaRankingTypeParam      rankingType = MangaRankingTypeParam::all,
-	    std::uint8_t               limit       = 100,
-	    std::uint8_t               offset      = 0,
-	    std::optional<std::string> fields      = std::nullopt) const;
+	    const MangaRankingTypeParam&      rankingType = MangaRankingTypeParam::all,
+	    const std::uint8_t&               limit       = 100,
+	    const std::uint8_t&               offset      = 0,
+	    const std::optional<std::string>& fields      = std::nullopt) const;
 
 	//# User Manga
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserMangaListStatus> updateUserMangaListStatus(
-	    std::uint32_t                   mangaId,
-	    std::optional<MangaStatusParam> status          = std::nullopt,
-	    std::optional<bool>             isReReading     = std::nullopt,
-	    std::optional<std::uint8_t>     score           = std::nullopt,
-	    std::optional<std::uint8_t>     numVolsRead     = std::nullopt,
-	    std::optional<std::uint8_t>     numChaptersRead = std::nullopt,
-	    std::optional<std::uint8_t>     priority        = std::nullopt,
-	    std::optional<std::uint8_t>     numTimesRead    = std::nullopt,
-	    std::optional<std::uint8_t>     reReadValue     = std::nullopt,
-	    std::optional<std::string>      tags            = std::nullopt,
-	    std::optional<std::string>      comments        = std::nullopt) const;
+	    const std::uint32_t&                   mangaId,
+	    const std::optional<MangaStatusParam>& status          = std::nullopt,
+	    const std::optional<bool>&             isReReading     = std::nullopt,
+	    const std::optional<std::uint8_t>&     score           = std::nullopt,
+	    const std::optional<std::uint8_t>&     numVolsRead     = std::nullopt,
+	    const std::optional<std::uint8_t>&     numChaptersRead = std::nullopt,
+	    const std::optional<std::uint8_t>&     priority        = std::nullopt,
+	    const std::optional<std::uint8_t>&     numTimesRead    = std::nullopt,
+	    const std::optional<std::uint8_t>&     reReadValue     = std::nullopt,
+	    const std::optional<std::string>&      tags            = std::nullopt,
+	    const std::optional<std::string>&      comments        = std::nullopt) const;
 
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserMangaList> getUserMangaList(
-	    std::string                     userName = "@me",
-	    std::optional<MangaStatusParam> status   = std::nullopt,
-	    std::optional<MangaSortParam>   sort     = std::nullopt,
-	    std::uint8_t                    limit    = 100,
-	    std::uint8_t                    offset   = 0) const;
+	    const std::string&                     userName = "@me",
+	    const std::optional<MangaStatusParam>& status   = std::nullopt,
+	    const std::optional<MangaSortParam>&   sort     = std::nullopt,
+	    const std::uint8_t&                    limit    = 100,
+	    const std::uint8_t&                    offset   = 0) const;
 
 	//# User
 	template <class ReturnType = std::string>
 	std::variant<std::string, UserObject> getUserData(
-	    std::string                userName = "@me",
-	    std::optional<std::string> fields   = std::nullopt) const;
+	    const std::string&                userName = "@me",
+	    const std::optional<std::string>& fields   = std::nullopt) const;
 
-	bool deleteUserAnime(std::uint32_t animeId) const;
-	bool deleteUserMangaListItem(std::uint32_t mangaId) const;
+	bool deleteUserAnime(const std::uint32_t& animeId) const;
+	bool deleteUserMangaListItem(const std::uint32_t& mangaId) const;
 
-	Client(Auth& auth);
+	static inline const std::string defaultCacheFile =
+	    std::string(getpwuid(getuid())->pw_dir) + "/.cache/.malcache.json";
+
+	Client(Auth& auth, const std::string& cacheFile = defaultCacheFile);
 
 	Client(
-	    std::string clientId,
-	    std::string clientSecrect,
-	    std::string redirectUri,
-	    std::string state = "Authenticaion");
+	    const std::string& clientId,
+	    const std::string& clientSecrect,
+	    const std::string& redirectUri,
+	    const std::string& cacheFile = defaultCacheFile,
+	    const std::string& state     = "Authenticaion");
 };

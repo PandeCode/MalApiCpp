@@ -109,6 +109,7 @@ std::string utils::trim(const std::string& s) {
 
 void utils::overwriteFile(const std::string& path, const std::string& text) {
 	std::ofstream file(path, std::ofstream::trunc);
+	if(file.bad()) { throw std::runtime_error("Bad file."); }
 	file << text;
 	file.close();
 }
