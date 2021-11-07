@@ -9,9 +9,7 @@ int main() {
 	//testAuthPath();
 	//testListener();
 	TestClient testClient;
-	testClient.testObjectGetForumTopicDetail();
-	testClient.testStringGetForumTopicDetail();
-	//testClient.testAllString();
+	testClient.testAllString();
 	testClient.testAllObject();
 
 	//std::cout << testAuth() << std::endl;

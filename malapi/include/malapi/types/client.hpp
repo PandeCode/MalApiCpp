@@ -9,6 +9,13 @@
 
 // Anime
 
+struct Paging {
+	std::optional<std::string> next;
+	std::optional<std::string> previous;
+
+	std::string toString() const;
+};
+
 // AlternativeTitlesObject The set of titles and synonyms of the anime.
 struct AlternativeTitlesObject {
 	std::string              en;       //  The English title of the media
@@ -150,8 +157,30 @@ struct AnimeList {
 	std::string toString() const;
 };
 
+struct MainPicture {
+	std::string large;
+	std::string medium;
+};
+
+struct Node {
+	int64_t     id;
+	MainPicture mainPicture;
+	std::string title;
+};
+
+struct Ranking {
+	int64_t rank;
+};
+
+struct Datum {
+	Node    node;
+	Ranking ranking;
+};
+
 struct AnimeRanking {
-	std::string toString() const;
+	std::vector<Datum> data;
+	Paging             paging;
+	std::string        toString() const;
 };
 
 enum class AnimeRankingType : std::uint8_t {
@@ -226,9 +255,9 @@ struct CreatedBy {
 };
 
 struct Post {
-	std::string body;
-	Date        created_at;
-	CreatedBy   created_by;
+	std::string   body;
+	Date          created_at;
+	CreatedBy     created_by;
 	std::string   id;
 	std::uint16_t number;
 	std::string   signature;
@@ -242,23 +271,17 @@ struct ForumTopicDetailData {
 
 	std::string toString() const;
 };
-
-struct Paging {
-	std::optional<std::string> next;
-	std::optional<std::string> previous;
-
-	std::string toString() const;
-};
-
 struct ForumTopicDetail {
 	ForumTopicDetailData data;
 	Paging               paging;
 
 	std::string toString() const;
 };
+
 struct ForumTopics {
 	std::string toString() const;
 };
+
 enum class ForumSortParam : std::uint8_t { recent };
 
 //Manga
@@ -276,14 +299,14 @@ struct MangaRanking {
 enum class MangaRankingTypeParam : std::uint8_t {
 	all,          // All
 	bypopularity, // Most Popular
-	//manga,        // Top Manga
-	//oneshots,     // Top One-shots
-	//doujin,       // Top Doujinshi
-	//lightnovels,  // Top Light Novels
-	//novels,       // Top Novels
-	//manhwa,       // Top Manhwa
-	//manhua,       // Top Manhua
-	//favorite,     // Most Favorited
+		      //manga,        // Top Manga
+		      //oneshots,     // Top One-shots
+		      //doujin,       // Top Doujinshi
+		      //lightnovels,  // Top Light Novels
+		      //novels,       // Top Novels
+		      //manhwa,       // Top Manhwa
+		      //manhua,       // Top Manhua
+		      //favorite,     // Most Favorited
 };
 
 //UserManga
