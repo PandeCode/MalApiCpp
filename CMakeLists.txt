@@ -26,4 +26,3 @@ include(cotire)
 
 add_subdirectory(malapi)
 add_subdirectory(MalApiTest)
-add_subdirectory(GetDubs)
