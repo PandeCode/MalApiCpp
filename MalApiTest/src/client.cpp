@@ -133,7 +133,7 @@ void TestClient::testAll() const {
 #define DEF_STR_TEST(TEST, FUNCTION)                                          \
 	void TestClient::TEST() const {                                       \
 		auto res = std::get<0>(client.FUNCTION);                      \
-		std::cout << BANNER << #TEST << BANNER << "\n"               \
+		std::cout << BANNER << #TEST << BANNER << "\n"                \
 			  << nlohmann::json::parse(res).dump(4) << std::endl; \
 	}
 
@@ -143,15 +143,15 @@ DEF_STR_TEST(testStringGetAnimeDetails,       getAnimeDetails(39535));
 DEF_STR_TEST(testStringGetUserData,           getUserData());
 DEF_STR_TEST(testStringGetAnimeRanking,       getAnimeRanking(std::nullopt, AnimeRankingType::all, 4, 0));
 DEF_STR_TEST(testStringGetSeasonalAnime,      getSeasonalAnime(2021, SeasonParam::winter));
-DEF_STR_TEST(testStringGetUserSuggestedAnime, getUserSuggestedAnime(4));
-DEF_STR_TEST(testStringGetUserAnimeList,      getUserAnimeList());
+DEF_STR_TEST(testStringGetUserSuggestedAnime, getUserSuggestedAnime(4 ,1));
+DEF_STR_TEST(testStringGetUserAnimeList,      getUserAnimeList("@me", std::nullopt, std::nullopt, 4 , 1));
 DEF_STR_TEST(testStringGetForumBoards,        getForumBoards());
 DEF_STR_TEST(testStringGetForumTopicDetail,   getForumTopicDetail(14, 4, 0));
-DEF_STR_TEST(testStringGetForumTopics,        getForumTopics());
-DEF_STR_TEST(testStringGetMangaList,          getMangaList("new game"));
+DEF_STR_TEST(testStringGetForumTopics,        getForumTopics(1692966, std::nullopt,std::nullopt,std::nullopt,std::nullopt,std::nullopt, 1, 1));
+DEF_STR_TEST(testStringGetMangaList,          getMangaList("new game",std::nullopt, 4,  1));
 DEF_STR_TEST(testStringGetMangaDetails,       getMangaDetails(5114));
-DEF_STR_TEST(testStringGetMangaRanking,       getMangaRanking(MangaRankingTypeParam::all, 4));
-DEF_STR_TEST(testStringGetUserMangaList,      getUserMangaList("@me", std::nullopt, std::nullopt, 4));
+DEF_STR_TEST(testStringGetMangaRanking,       getMangaRanking(MangaRankingTypeParam::all, 4, 1));
+DEF_STR_TEST(testStringGetUserMangaList,      getUserMangaList("@me", std::nullopt, std::nullopt, 4, 1));
 // clang-format on
 
 #define DEF_OBJ_TEST(TEST, FUNCTION)                           \

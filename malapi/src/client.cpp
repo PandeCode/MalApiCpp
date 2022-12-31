@@ -364,7 +364,7 @@ std::string Client::M__getMangaDetails(
 
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
-			       ("/v2/anime/" + std::to_string(mangaId)).c_str(),
+			       ("/v2/manga/" + std::to_string(mangaId)).c_str(),
 			       params)
 			       .c_str()));
 }
@@ -396,7 +396,7 @@ std::string Client::M__getMangaRanking(
 	if(limit != LIMIT_DEFAULT) params.emplace("limit", std::to_string(limit));
 	if(offset != OFFSET_DEFAULT) params.emplace("offset", std::to_string(offset));
 
-	std::string str = httplib::append_query_params("/v2/anime/ranking", params);
+	std::string str = httplib::append_query_params("/v2/manga/ranking", params);
 	//str = "/v2/anime/ranking?limit=4&ranking_type=manga";
 	//str = "/v2/anime/ranking?ranking_type=manga&limit=4";
 
@@ -490,7 +490,7 @@ std::string Client::M__getUserMangaList(
 
 	return handleReturn(
 	    httpClient.Get(httplib::append_query_params(
-			       ("/v2/users/" + userName + "/animelist").c_str(),
+			       ("/v2/users/" + userName + "/mangalist").c_str(),
 			       params)
 			       .c_str()));
 }
